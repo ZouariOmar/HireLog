@@ -3,23 +3,28 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!-- Module info -->
+  <groupId>com.mycompany.HireLog</groupId>
+  <artifactId>HireLog</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
   <properties>
-    <mavenVersion>${project.modelVersion}</mavenVersion>
+    <!-- Custom Properties -->
     <projectName>HireLog</projectName>
-    <projectVersion>1.0.0</projectVersion>
+    <projectMainClass>com.mycompany.HireLog.App</projectMainClass>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.release>17</maven.compiler.release>
-    <projectMainClass>com.mycompany.HireLog.App</projectMainClass>
+    <maven.compiler.release>21</maven.compiler.release>
+    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>21</maven.compiler.target>
     <javafx.version>24.0.2</javafx.version>
+    <slf4j.version>2.0.9</slf4j.version>
   </properties>
 
   <name>${projectName}</name>
-  <packaging>jar</packaging>
-  <version>1.0.0</version>
   <url>http://maven.apache.org</url>
-  <groupId>com.mycompany.HireLog</groupId>
-  <artifactId>HireLog</artifactId>
 
   <developers>
     <developer>
@@ -38,14 +43,14 @@
         <artifactId>javafx-controls</artifactId>
         <version>${javafx.version}</version>
       </dependency>
-      <!-- / JavaFx -->
+
       <!-- JavaFx fxml -->
       <dependency>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-fxml</artifactId>
         <version>${javafx.version}</version>
       </dependency>
-      <!-- / JavaFx fxml -->
+
       <!-- Junit4 -->
       <dependency>
         <groupId>junit</groupId>
@@ -53,7 +58,39 @@
         <version>4.13.2</version>
         <scope>test</scope>
       </dependency>
-      <!-- / Junit4 -->
+
+      <!-- Java Sqlite -->
+      <dependency>
+        <groupId>org.xerial</groupId>
+        <artifactId>sqlite-jdbc </artifactId>
+        <version>3.45.1.0</version>
+      </dependency>
+
+      <!-- Java Sqlite slf4j -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+
+      <!-- Core Log4j2 -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>2.20.0</version> <!-- Use latest version -->
+      </dependency>
+
+      <!-- API for Logging (used in your code) -->
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>2.20.0</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -63,17 +100,44 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
     </dependency>
-    <!-- / JavaFx -->
+
     <!-- JavaFx fxml -->
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
     </dependency>
-    <!-- / JavaFx fxml -->
+
+    <!-- Junit4 -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
+    </dependency>
+
+    <!-- Java Sqlite -->
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc </artifactId>
+    </dependency>
+
+    <!-- Java Sqlite slf4j -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+    </dependency>
+    <!-- Core Log4j2 -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+
+    <!-- API for Logging (used in your code) -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
     </dependency>
   </dependencies>
 
@@ -95,6 +159,10 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.13.0</version>
+          <configuration>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
+          </configuration>
         </plugin>
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
@@ -122,6 +190,7 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.6.1</version>
         </plugin>
+
         <!-- eclipse plugin -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -132,7 +201,7 @@
             <downloadJavadocs>true</downloadJavadocs>
           </configuration>
         </plugin>
-        <!-- / eclipse Plugin -->
+
         <!-- JavaFx Plugin -->
         <plugin>
           <groupId>org.openjfx</groupId>
@@ -142,7 +211,6 @@
             <mainClass>${projectMainClass}</mainClass>
           </configuration>
         </plugin>
-        <!-- / JavaFx Plugin -->
       </plugins>
     </pluginManagement>
   </build>
