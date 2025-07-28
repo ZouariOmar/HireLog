@@ -12,8 +12,10 @@
  * @serial [bc0b8d5]
  */
 
+// `App` pkg name
 package com.mycompany.HireLog;
 
+// JavaFx imports
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

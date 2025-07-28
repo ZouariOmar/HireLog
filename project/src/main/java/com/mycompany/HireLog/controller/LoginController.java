@@ -1,13 +1,15 @@
 /**
  * LoginController.java
  *
- * the controller of `Login.fxml` view
+ * The controller of `Login.fxml` view
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 27/07/2025
  * @see https://github.com/ZouariOmar/HireLog/tree/main/project/src/test/java/com/mycompany/HireLog/controller/LoginController.java
  */
+
+// `LoginController` pkg name
 package com.mycompany.HireLog.controller;
 
 // JavaFx imports
@@ -17,11 +19,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-
-// Java core imports
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 
 // Cutom imports
 import com.mycompany.HireLog.util.*;
@@ -29,6 +29,9 @@ import com.mycompany.HireLog.util.*;
 public class LoginController {
   @FXML
   private ImageView logo;
+
+  @FXML
+  private ImageView banner;
 
   @FXML
   private Button login;
@@ -41,7 +44,9 @@ public class LoginController {
 
   @FXML
   public void initialize() {
-    logo.setImage(new Image(getClass().getResource("/assets/logo.png").toExternalForm()));
+    // Set images
+    logo.setImage(new Image(getClass().getResource("/assets/logo-1.png").toExternalForm()));
+    banner.setImage(new Image(getClass().getResource("/assets/banner.png").toExternalForm()));
   }
 
   /**
@@ -49,14 +54,9 @@ public class LoginController {
    *
    * <p>
    * This method is marked with &#64;FXML so it can be invoked by the FXML loader.
-   * </p>
-   * <p>
+   * </br>
    * This method catches the following exceptions:
    * </p>
-   * <ul>
-   * <li><code>URISyntaxException</code> exception</li>
-   * <li><code>FileNotFoundException</code> exception</li>
-   * </ul>
    *
    * @param event {@code MouseEvent}
    *
@@ -66,15 +66,21 @@ public class LoginController {
   private void onMouseClicked(MouseEvent event) {
     final String enterdUsername = username.getText();
     final String eneterdPassword = password.getText();
-    try {
+    if (UserUtil.isUser(enterdUsername, eneterdPassword))
+      login.setText("Passed!");
+    else
+      login.setText("Fuck Me!");
+  }
+
+  @FXML
+  private void onKeyPressed(KeyEvent event) {
+    if (event.getCode() == KeyCode.ENTER) {
+      final String enterdUsername = username.getText();
+      final String eneterdPassword = password.getText();
       if (UserUtil.isUser(enterdUsername, eneterdPassword))
-        login.setText("Passed!");
+        login.setText("Enter!");
       else
-        login.setText("Fuck Me!");
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
+        login.setText("Omar!");
     }
   }
 }
