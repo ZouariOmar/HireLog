@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
-- Established the database connection (we use SQLITE3)
-- Add `log4j` logger framework && document the code
+- [e263b4f] Established the database connection (we use SQLITE3)
+- [06ba477] Add `log4j` logger framework && document the code
 
 ### Changed
 
-- Split the database connection and make `DatabaseConnect.java`
+- [06ba477] Split the database connection and make `DatabaseConnect.java`
 
 ### Deprecated
 
