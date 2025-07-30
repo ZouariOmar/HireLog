@@ -29,11 +29,18 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.scene.control.Hyperlink;
 import javafx.event.ActionEvent;
+import javafx.scene.control.Label;
 
-// Cutom imports
+// `log4j` java imports
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
+// `util` Cutom imports
 import com.mycompany.HireLog.util.*;
 
 public class LoginController {
+  private static final Logger _LOGGER = LogManager.getLogger();
+
   @FXML // fx:id="banner"
   private ImageView banner; // Value injected by FXMLLoader
 
@@ -52,6 +59,9 @@ public class LoginController {
   @FXML // fx:id="username"
   private TextField username; // Value injected by FXMLLoader
 
+  @FXML // fx:id="status"
+  private Label status; // Value injected by FXMLLoader
+
   /**
    * Slot connected to `login` signals
    *
@@ -64,13 +74,31 @@ public class LoginController {
    * @see https://openjfx.io/javadoc/22/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html
    */
   @FXML
-  private void onLoginAction(ActionEvent event) {
-    final String enterdUsername = username.getText();
-    final String eneterdPassword = password.getText();
-    if (UserUtil.isUser(enterdUsername, eneterdPassword))
-      login.setText("Enter!");
-    else
-      login.setText("Omar!");
+  private void onLoginAction(ActionEvent event) throws IOException {
+    final String enterdUsername = username.getText(), eneterdPassword = password.getText();
+
+    if (enterdUsername.isEmpty()
+        || enterdUsername.isBlank()) { // Display "Username field is empty/blank!" for 3s
+      UiHelper.showStatusMsg(status, "Username field is empty/blank!");
+      _LOGGER.warn("Login Access Failed: `enterdUsername` isEmpty/isBlank!");
+
+    } else if (eneterdPassword.isEmpty()
+        || enterdUsername.isBlank()) { // Display "Password field is empty/blank!" for 3s
+      UiHelper.showStatusMsg(status, "Password field is empty/blank!");
+      _LOGGER.warn("Login Access Failed: `eneterdPassword` isEmpty/isBlank!");
+
+    } else if (UserHelper.isUser(enterdUsername, eneterdPassword)) { // Login success!
+      Parent root = FXMLLoader.load(getClass().getResource("/fxml/Dashboard.fxml"));
+      Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+      stage.setTitle("HireLog - Sign up");
+      stage.setScene(new Scene(root));
+      stage.show();
+      _LOGGER.info("Login Access Success: `{}` accessed!", enterdUsername);
+
+    } else { // Display "Username or password incoreect!" for 3s
+      UiHelper.showStatusMsg(status, "Username or password incoreect!");
+      _LOGGER.warn("Login Access Failed: `{}` want to access!", enterdUsername);
+    }
   }
 
   /**
@@ -103,4 +131,14 @@ public class LoginController {
     logo.setImage(new Image(getClass().getResource("/assets/logo-1.png").toExternalForm()));
     banner.setImage(new Image(getClass().getResource("/assets/banner.png").toExternalForm()));
   }
+}
+
+// TODO: Make all resources paths in `LoginControllerPaths`
+enum LoginControllerPaths {
+
+}
+
+// TODO: Make all login status in `LoginControllerStatus`
+enum LoginControllerStatus {
+
 }

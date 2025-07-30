@@ -16,6 +16,11 @@
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
       <children>
         <ImageView fx:id="banner" fitHeight="208.0" fitWidth="400.0" layoutY="-84.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="376.0" AnchorPane.topAnchor="-84.0" />
+            <Label fx:id="status" alignment="CENTER" contentDisplay="CENTER" layoutX="93.0" layoutY="106.0" prefHeight="18.0" prefWidth="212.0" text="Username or password incoreect!" textFill="RED" visible="false">
+               <font>
+                  <Font name="System Bold" size="13.0" />
+               </font>
+            </Label>
         <Label layoutX="51.0" layoutY="130.0" prefHeight="19.0" prefWidth="166.0" text="Please entre your details" textFill="#735353cf">
           <font>
             <Font size="15.0" />

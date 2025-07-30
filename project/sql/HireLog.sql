@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS users (
   user_id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  email TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS userlog (
@@ -13,5 +14,5 @@ CREATE TABLE IF NOT EXISTS userlog (
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
-INSERT INTO users (username, password)
-VALUES ('admin', 'admin');
+INSERT INTO users (username, password, email)
+VALUES ('admin', 'admin', 'admin@hirelog.com');
