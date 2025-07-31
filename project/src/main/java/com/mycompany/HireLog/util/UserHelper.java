@@ -8,7 +8,7 @@
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 28/07/2025
- * @see https://github.com/ZouariOmar/HireLog/blob/main/project/src/main/java/com/mycompany/HireLog/util/UserHelper.java
+ * @link <a href="https://github.com/ZouariOmar/HireLog/blob/main/project/src/main/java/com/mycompany/HireLog/util/UserHelper.java">GitHub Source</a> 
  */
 
 // `UserHelper` pkg name
@@ -22,11 +22,12 @@ import java.util.regex.Pattern;
 
 // `log4j` java imports
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
+// Java BCrypt import
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
-import javafx.scene.chart.PieChart.Data;
-
-import org.apache.logging.log4j.LogManager;
+import com.mycompany.HireLog.model.User;
 
 public final class UserHelper {
   private static final Logger _LOGGER = LogManager.getLogger();
@@ -34,7 +35,6 @@ public final class UserHelper {
   /**
    * Verify the validity of the given `username` and `password`
    *
-   * <p>
    * <h1>About <code>isUser</code> method</h1>
    * NONE
    * </br>
@@ -43,7 +43,6 @@ public final class UserHelper {
    * <li>SQLException</li>
    * <li>Exceptions</li>
    * </ul>
-   * </p>
    *
    * @param username {@code final String}
    * @param password {@code final String}
@@ -114,18 +113,47 @@ public final class UserHelper {
     return false;
   }
 
-  public static final String createUser(String prename, String name, String email, String password) {
+  /**
+   * Create new user account and return the generated `username`
+   *
+   * <p>
+   * - Note: username = prename + name + lastAvailbleId
+   * - Warr: if we found username like `testtest-1` that mean he is corrupted
+   * (getLastAvailbleId() failed)
+   * </p>
+   *
+   * @param prename  {@code String}
+   * @param name     {@code String}
+   * @param email    {@code String}
+   * @param password {@code String}
+   * @return {@code String}
+   *
+   * @see Database
+   *
+   *      <pre>
+   * {@code
+   * String username = UserHelper.createUser(
+   * entredPrename,
+   * entredName,
+   * entredEmail,
+   * entredPassword);
+   *
+   * if (username != null) // SignUp success!
+   * else                  // :)
+   * }</pre>
+   */
+  public static final String createUser(User user) {
     PreparedStatement pstmt = null;
-    String username = prename + name + Integer.toString(getLastAvailbleId());
+    String username = user.username().toLowerCase() + Integer.toString(getLastAvailbleId());
 
     try {
       pstmt = Database.connect().prepareStatement("INSERT INTO users (username, password, email) VALUES(?, ?, ?)");
       pstmt.setString(1, username); // If `username` null, it will be catch it by `SQLException`
-      pstmt.setString(2, BCrypt.hashpw(password, BCrypt.gensalt()));
-      pstmt.setString(3, email);
+      pstmt.setString(2, BCrypt.hashpw(user.password(), BCrypt.gensalt()));
+      pstmt.setString(3, user.email());
       pstmt.executeUpdate(); // Use executeUpdate() — not executeQuery() — for INSERT, UPDATE, or DELETE.
       _LOGGER.info("`createUser` query executed successfully!");
-      return username;
+      return username; // Return `username`
     } catch (SQLException e) {
       _LOGGER.error("`createUser` query Failed!");
       e.printStackTrace();
@@ -137,11 +165,27 @@ public final class UserHelper {
         e.printStackTrace();
       }
     }
-    return null;
+    return null; // dummy
   }
 
+  /**
+   * Get the last availble id based on `ROWID`
+   *
+   * <p>
+   * More detailed description or notes.
+   * </p>
+   *
+   * @return {@code int}
+   * @see https://www.sqlite.org/rowidtable.html
+   * @see #createUser
+   *
+   *      <pre>
+   * {@code
+   * String username = prename.toLowerCase() + name.toLowerCase() + Integer.toString(getLastAvailbleId());
+   * }</pre>
+   */
   private static final int getLastAvailbleId() {
-    try (ResultSet rs = Database.connect().prepareStatement("SELECT IFNULL(MAX(user_id), 0) + 1 AS next_id FROM users")
+    try (ResultSet rs = Database.connect().prepareStatement("SELECT MAX(rowid) AS next_id FROM users")
         .executeQuery()) {
       if (rs.next())
         return rs.getInt("next_id");
@@ -162,7 +206,7 @@ public final class UserHelper {
    * @param email {@code String}
    * @return {@code boolean}
    *
-   * @see isPassword
+   * @see #isPassword
    * 
    *      <pre>
    * {@code
@@ -194,7 +238,7 @@ public final class UserHelper {
    * @param password {@code String}
    * @return {@code boolean}
    *
-   * @see isEmail
+   * @see #isEmail
    * 
    *      <pre>
    * {@code

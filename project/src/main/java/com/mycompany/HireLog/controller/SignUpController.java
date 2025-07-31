@@ -17,7 +17,7 @@ package com.mycompany.HireLog.controller;
 // Java core imports
 import java.io.IOException;
 
-// JavaFx imports
+// Java javafx imports
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -31,14 +31,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-// `log4j` java imports
+// java `log4j` imports
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-// `util` Cutom imports
-import com.mycompany.HireLog.util.*;
+// java custom imports
+import com.mycompany.HireLog.model.User;
+import com.mycompany.HireLog.util.UiHelper;
+import com.mycompany.HireLog.util.UserHelper;
 
 public class SignUpController {
   private static final Logger _LOGGER = LogManager.getLogger();
@@ -101,7 +104,6 @@ public class SignUpController {
       UiHelper.showStatusMsg(status, "Prename field is empty/blank!");
       _LOGGER.warn("SignUp Failed: `enterdPrename` isEmpty/isBlank!");
       return;
-
     }
 
     if (entredName.isEmpty() || entredName.isBlank()) { // Display "Name field is empty/blank!" for 3s
@@ -130,21 +132,16 @@ public class SignUpController {
       return;
     }
 
-    String username = UserHelper.createUser(
-        entredPrename,
-        entredName,
+    String username = UserHelper.createUser(new User(
+        entredPrename + entredName,
         entredEmail,
-        entredPassword);
+        entredPassword));
 
     if (username != null) { // SignUp success!
-      Parent root = FXMLLoader.load(getClass().getResource("/fxml/Dashboard.fxml"));
-      Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-      stage.setTitle("HireLog - Sign up");
-      stage.setScene(new Scene(root));
-      stage.show();
+      UiHelper.showStatusMsg(status, "Your username is: " + username, Color.GREEN, 10); // Display `username` for 10s
       _LOGGER.info("SignUp Success: `{}` accessed! - prename: {} Name: {} Email: {} Password: {}",
           entredPrename, entredPrename, entredName, entredEmail, entredPassword);
-    }
+    } // No need for else statment
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
