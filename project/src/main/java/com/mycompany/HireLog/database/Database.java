@@ -12,7 +12,7 @@
  */
 
 // `Database` pkg name
-package com.mycompany.HireLog.util;
+package com.mycompany.HireLog.database;
 
 // Java Sql core imports
 import java.sql.Connection;

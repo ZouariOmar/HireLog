@@ -12,7 +12,7 @@
  */
 
 // `UserHelper` pkg name
-package com.mycompany.HireLog.util;
+package com.mycompany.HireLog.database;
 
 // Java Sql core imports
 import java.sql.PreparedStatement;
@@ -27,13 +27,15 @@ import org.apache.logging.log4j.LogManager;
 // Java BCrypt import
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
+// Java custom imports
 import com.mycompany.HireLog.model.User;
 
-public final class UserHelper {
+public final class UserConnector {
   private static final Logger _LOGGER = LogManager.getLogger();
 
   /**
-   * Verify the validity of the given `username` and `password`
+   * Verify the validity of the given `username` and `password` and return the
+   * `user_id`
    *
    * <h1>About <code>isUser</code> method</h1>
    * NONE
@@ -47,33 +49,29 @@ public final class UserHelper {
    * @param username {@code final String}
    * @param password {@code final String}
    *
-   * @return {@code boolean}
+   * @return {@code int}
    *
    * @see https://www.tutorialspoint.com/sqlite/sqlite_java.htm
    *
    *      <pre>
    * {@code
-   * if (UserHelper.isUser("admin", "admin"))
+   * if (UserHelper.isUser("admin", "admin") != -1)
    *  System.out.println("Passed!");
    * else
    *  System.err.println(":-)");
    * }</pre>
    */
-  public final static boolean isUser(final String username, final String password) {
+  public final static int isUser(final String username, final String password) {
     PreparedStatement pstmt = null;
     ResultSet res = null;
-
-    // if (BCrypt.checkpw(candidate_password, stored_hash))
-    // System.out.println("It matches");
-    // else
-    // System.out.println("It does not match");
 
     try {
       pstmt = Database.connect().prepareStatement("SELECT * FROM users WHERE username = ?");
       pstmt.setString(1, username);
       res = pstmt.executeQuery();
       _LOGGER.info("`isUser` query executed successfully!");
-      return res.next() ? BCrypt.checkpw(password, res.getString("password")) : false;
+      if (res.next() && BCrypt.checkpw(password, res.getString("password")))
+        return res.getInt("user_id");
     } catch (SQLException e) {
       _LOGGER.error("`isUser` query Failed!");
       e.printStackTrace();
@@ -87,7 +85,7 @@ public final class UserHelper {
         e.printStackTrace();
       }
     }
-    return false;
+    return -1;
   }
 
   public static final boolean isExistedEmail(String email) {

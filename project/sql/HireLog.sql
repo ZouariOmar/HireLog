@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS hire_logs (
     log_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     user_id INTEGER NOT NULL,
     event_type TEXT NOT NULL CHECK (event_type IN ('applied', 'interviewed', 'hired', 'rejected', 'other')),
-    event_timestamp DATETIME NOT NULL,
+    event_timestamp DATE NOT NULL,
     comments TEXT,
     -- Contraints
     FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE

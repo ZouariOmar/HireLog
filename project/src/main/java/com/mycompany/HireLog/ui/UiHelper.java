@@ -12,7 +12,7 @@
  */
 
 // UiHelper pkg name
-package com.mycompany.HireLog.util;
+package com.mycompany.HireLog.ui;
 
 // Java javafx imports
 import javafx.scene.control.Label;

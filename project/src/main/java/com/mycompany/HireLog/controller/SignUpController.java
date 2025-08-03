@@ -28,7 +28,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -40,8 +39,8 @@ import org.apache.logging.log4j.LogManager;
 
 // java custom imports
 import com.mycompany.HireLog.model.User;
-import com.mycompany.HireLog.util.UiHelper;
-import com.mycompany.HireLog.util.UserHelper;
+import com.mycompany.HireLog.database.UserConnector;
+import com.mycompany.HireLog.ui.UiHelper;
 
 public class SignUpController {
   private static final Logger _LOGGER = LogManager.getLogger();
@@ -113,26 +112,26 @@ public class SignUpController {
 
     }
 
-    if (!UserHelper.isEmail(entredEmail)) { // Display "Invalid email format!" for 3s
+    if (!UserConnector.isEmail(entredEmail)) { // Display "Invalid email format!" for 3s
       UiHelper.showStatusMsg(status, "Invalid email format!");
       _LOGGER.warn("SignUp Failed: Invalid email format! - enterdEmail: `{}`", entredEmail);
       return;
 
     }
 
-    if (UserHelper.isExistedEmail(entredEmail)) { // Display "This email already exist!" for 3s
+    if (UserConnector.isExistedEmail(entredEmail)) { // Display "This email already exist!" for 3s
       UiHelper.showStatusMsg(status, "This email already exist!");
       _LOGGER.warn("SignUp Failed: Invalid email format! - enterdEmail: `{}`", entredEmail);
       return;
     }
 
-    if (!UserHelper.isPassword(entredPassword)) { // Display "Invalid password format!" for 3s
+    if (!UserConnector.isPassword(entredPassword)) { // Display "Invalid password format!" for 3s
       UiHelper.showStatusMsg(status, "Invalid password format!");
       _LOGGER.warn("SignUp Failed: Invalid password format! - enterdPassword: `{}`", entredEmail);
       return;
     }
 
-    String username = UserHelper.createUser(new User(
+    String username = UserConnector.createUser(new User(
         entredPrename + entredName,
         entredEmail,
         entredPassword));
@@ -154,9 +153,5 @@ public class SignUpController {
     assert prename != null : "fx:id=\"prename\" was not injected: check your FXML file 'SignUp.fxml'.";
     assert signUpBox != null : "fx:id=\"signUpBox\" was not injected: check your FXML file 'SignUp.fxml'.";
     assert status != null : "fx:id=\"status\" was not injected: check your FXML file 'SignUp.fxml'.";
-
-    // Set images paths
-    logo.setImage(new Image(getClass().getResource("/assets/logo-1.png").toExternalForm()));
-    banner.setImage(new Image(getClass().getResource("/assets/banner.png").toExternalForm()));
   }
 }

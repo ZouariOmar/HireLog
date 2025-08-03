@@ -28,7 +28,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.Image;
 import javafx.event.ActionEvent;
 
 // `log4j` java imports
@@ -36,7 +35,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 // `util` Cutom imports
-import com.mycompany.HireLog.util.*;
+import com.mycompany.HireLog.database.*;
+import com.mycompany.HireLog.ui.UiHelper;
 
 public class LoginController {
   private static final Logger _LOGGER = LogManager.getLogger();
@@ -81,20 +81,28 @@ public class LoginController {
         || enterdUsername.isBlank()) { // Display "Username field is empty/blank!" for 3s
       UiHelper.showStatusMsg(status, "Username field is empty/blank!");
       _LOGGER.warn("Login Access Failed: `enterdUsername` isEmpty/isBlank!");
+      return;
+    }
 
-    } else if (eneterdPassword.isEmpty()
+    if (eneterdPassword.isEmpty()
         || enterdUsername.isBlank()) { // Display "Password field is empty/blank!" for 3s
       UiHelper.showStatusMsg(status, "Password field is empty/blank!");
       _LOGGER.warn("Login Access Failed: `eneterdPassword` isEmpty/isBlank!");
+      return;
+    }
 
-    } else if (UserHelper.isUser(enterdUsername, eneterdPassword)) { // Login success!
-      Parent root = FXMLLoader.load(getClass().getResource("/fxml/Dashboard.fxml"));
+    int userId = UserConnector.isUser(enterdUsername, eneterdPassword);
+    if (userId != -1) { // Login success!
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Dashboard.fxml"));
+      loader.setControllerFactory(controllerClass -> {
+        return new DashboardController(userId);
+      });
+      Parent root = loader.load();
       Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
       stage.setTitle("HireLog - Sign up");
       stage.setScene(new Scene(root));
       stage.show();
       _LOGGER.info("Login Access Success: `{}` accessed!", enterdUsername);
-
     } else { // Display "Username or password incoreect!" for 3s
       UiHelper.showStatusMsg(status, "Username or password incoreect!");
       _LOGGER.warn("Login Access Failed: `{}` want to access!", enterdUsername);
@@ -126,10 +134,6 @@ public class LoginController {
   private void initialize() {
     assert logo != null : "fx:id=\"logo\" was not injected: check your FXML file 'SignUp.fxml'.";
     assert password != null : "fx:id=\"password\" was not injected: check your FXML file 'SignUp.fxml'.";
-
-    // Set images
-    logo.setImage(new Image(getClass().getResource("/assets/logo-1.png").toExternalForm()));
-    banner.setImage(new Image(getClass().getResource("/assets/banner.png").toExternalForm()));
   }
 }
 
