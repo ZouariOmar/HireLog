@@ -1,5 +1,5 @@
 
-package com.mycompany.HireLog.ui;
+package com.mycompany.hirelog.view;
 
 import java.sql.Date;
 

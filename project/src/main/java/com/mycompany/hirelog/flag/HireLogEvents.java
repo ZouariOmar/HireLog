@@ -1,21 +1,26 @@
 /**
- * ClassName.java
+ * HireLogEvents.java
  *
- * Short description of this class or file.
+ * HireLog `event_type`
  *
- * <p>Detailed explanation of the class, its responsibilities, and usage.</p>
+ * <p>None</p>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
- * @since YYYY-MM-DD
- * @deprecated Reason and alternative
- * @see RelatedClassOrDocumentation
- * @serial Serialization details (if applicable)
+ * @since 04/08/2025
+ * 
+ * @see com.mycompany.hirelog.model#HireLog
+ * 
+ * <a href="https://github.com/ZouariOmar/HireLog/tree/main/project/src/main/java/com/mycompany/HireLog/flag/HireLogEvents.java">
+ *  HireLogEvents.java
+ * </a>
  */
 
-package com.mycompany.HireLog.status;
+// `HireLogEvents` pkg name
+package com.mycompany.hirelog.flag;
 
 public enum HireLogEvents {
+
   APPLIED("Applied"),
   INTERVIEWED("Interviewed"),
   HIRED("Hired"),

@@ -43,7 +43,7 @@
 # =========================================
 
 # Project variables
-PROJECT_NAME="HireLog"                            # [DEFAULT] app/*
+PROJECT_NAME="hirelog"                            # [DEFAULT] app/* | [RECOMMEND] Write it lowerCase
 PROJECT_COMPANY="mycompany"                       # [DEFAULT] mycompany
 PROJECT_DIR="project"                             # [DEFAULT] current location | [RECOMMEND] We recommend to put the absulute build directory (where the super pom.xml)
 PROJECT_BUILDER="mvn"                             # [DEFAULT] Maven project builder | [OPTIONS] mvn -- gradle

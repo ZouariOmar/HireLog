@@ -1,25 +1,37 @@
 /**
  * DashboardController.java
  *
- * `Dashboard.fxml` Controller Class
+ * `Dashboard.fxml` controller class
  *
- * <p>
- * None
- * </p>
+ * <p>None</p>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 07/30/2025
- * @see RelatedClassOrDocumentation
+ *
+ *  <a href="https://github.com/ZouariOmar/HireLog/tree/main/project/src/main/java/com/mycompany/HireLog/controller/DashboardController.java">
+ *  DashboardController.java
+ *  </a>
  */
 
-package com.mycompany.HireLog.controller;
+// `DashboardController` pkg name
+package com.mycompany.hirelog.controller;
 
+// Core java imports
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Date;
+import java.util.ResourceBundle;
 
-import com.mycompany.HireLog.database.HireLogConnector;
+// Log4j java imports
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
+// Custom java imports
+import com.mycompany.hirelog.dao.HireLogConnector;
+import com.mycompany.hirelog.view.LogTableUi;
+
+// JavaFx imports
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,15 +46,17 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import com.mycompany.HireLog.ui.LogTableUi;
-
 public class DashboardController {
 
-  private final int userId;
+  private static final Logger _LOGGER = LogManager.getLogger();
 
-  public DashboardController(final int userId) {
-    this.userId = userId;
-  }
+  private final int userId; // User id | Must be come from `SignUpController`
+
+  @FXML // ResourceBundle that was given to the FXMLLoader
+  private ResourceBundle resources;
+
+  @FXML // URL location of the FXML file that was given to the FXMLLoader
+  private URL location;
 
   @FXML // fx:id="addLogBtn"
   private Button addLogBtn; // Value injected by FXMLLoader
@@ -77,11 +91,15 @@ public class DashboardController {
   @FXML // fx:id="searchField"
   private TextField searchField; // Value injected by FXMLLoader
 
+  public DashboardController(final int userId) {
+    this.userId = userId;
+  }
+
   @FXML
   void onAddLogBtnAction(ActionEvent event) throws IOException {
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HireLogDialog.fxml"));
-    loader.setControllerFactory(controllerClass -> {
-      return new HireLogDialogController(userId);
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HireLogForm.fxml"));
+    loader.setControllerFactory(_ -> {
+      return new HireLogFormController(userId);
     });
     Parent root = loader.load();
     Stage stage = new Stage();
@@ -93,10 +111,16 @@ public class DashboardController {
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
     assert addLogBtn != null : "fx:id=\"addLogBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert attachmentsCol != null : "fx:id=\"attachmentsCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert commentsCol != null : "fx:id=\"commentsCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert dateCol != null : "fx:id=\"dateCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert editLogBtn != null : "fx:id=\"editLogBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert eventCol != null : "fx:id=\"eventCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert logIdCol != null : "fx:id=\"logIdCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert logTable != null : "fx:id=\"logTable\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert removeLogBtn != null : "fx:id=\"removeLogBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert searchField != null : "fx:id=\"searchField\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert selectCol != null : "fx:id=\"selectCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
 
     // Setup cell value factories
     logIdCol.setCellValueFactory(new PropertyValueFactory<>("logId"));
@@ -107,8 +131,9 @@ public class DashboardController {
     selectCol.setCellValueFactory(cellData -> cellData.getValue().selectedProperty());
     selectCol.setCellFactory(CheckBoxTableCell.forTableColumn(selectCol));
 
-    // Then set the items
-    ObservableList<LogTableUi> logs = HireLogConnector.fetchAll(userId);
-    logTable.setItems(logs);
+    // Set the items
+    logTable.setItems(HireLogConnector.fetchAll(userId));
+
+    _LOGGER.info("{} loaded sucssefully!", location);
   }
 }

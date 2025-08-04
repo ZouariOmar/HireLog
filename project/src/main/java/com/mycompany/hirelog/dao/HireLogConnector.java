@@ -1,53 +1,65 @@
 /**
- * HireLogHelper.java
+ * HireLogConnector.java
  *
- * `hire_log` helper
+ * `hire_logs` DAO
  *
- * <p>`hire_log` CRUD</p>
+ * <p>`hire_logs` CRUD</p>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 03/08/2025
- * @see None
+ *
+ * <a href="https://github.com/ZouariOmar/HireLog/tree/main/project/src/main/java/com/mycompany/HireLog/dao/HireLogConnector.java">
+ *  HireLogConnector.java
+ * </a>
  */
 
-// HireLogHelper pkg name
-package com.mycompany.HireLog.database;
+// `HireLogConnector` pkg name
+package com.mycompany.hirelog.dao;
 
 // Java Sql core imports
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-// `log4j` java imports
-import org.apache.logging.log4j.Logger;
+// Log4j java imports
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import com.mycompany.HireLog.model.HireLog;
-import com.mycompany.HireLog.ui.LogTableUi;
+// Custom java imports²
+import com.mycompany.hirelog.model.HireLog;
+import com.mycompany.hirelog.view.LogTableUi;
 
+// JavaFx imports
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class HireLogConnector {
+
   private static final Logger _LOGGER = LogManager.getLogger();
+
+  private static final String _CTREATE_QUERY = "INSERT INTO hire_logs (user_id, event_type, event_timestamp, comments) VALUES(?, ?, ?, ?)";
+
+  private static final String _FETCH_ALL_QUERY = "SELECT * FROM hire_logs WHERE user_id = ?";
 
   public static void create(final HireLog hireLog) {
     PreparedStatement pstmt = null;
 
     try {
-      pstmt = Database.connect()
-          .prepareStatement(
-              "INSERT INTO hire_logs (user_id, event_type, event_timestamp, comments) VALUES(?, ?, ?, ?)");
+      pstmt = DatabaseManager.connect().prepareStatement(_CTREATE_QUERY);
+
       pstmt.setInt(1, hireLog.userId());
       pstmt.setString(2, hireLog.event());
       pstmt.setDate(3, hireLog.date());
       pstmt.setString(4, hireLog.comments());
+
       pstmt.executeUpdate();
       _LOGGER.info("`HireLogHelper#create` query executed successfully!");
+
     } catch (SQLException e) {
       _LOGGER.error("`HireLogHelper#create` query Failed!");
       e.printStackTrace();
+
     } finally {
       try {
         if (pstmt != null)
@@ -64,10 +76,10 @@ public class HireLogConnector {
     ResultSet res = null;
 
     try {
-      pstmt = Database.connect()
-          .prepareStatement(
-              "SELECT * FROM hire_logs WHERE user_id = ?");
+      pstmt = DatabaseManager.connect().prepareStatement(_FETCH_ALL_QUERY);
+
       pstmt.setInt(1, userId);
+
       res = pstmt.executeQuery();
       _LOGGER.info("`HireLogHelper#fetch` query executed successfully!");
 
@@ -83,6 +95,7 @@ public class HireLogConnector {
     } catch (SQLException e) {
       _LOGGER.error("`HireLogHelper#create` query Failed!");
       e.printStackTrace();
+
     } finally {
       try {
         if (pstmt != null)

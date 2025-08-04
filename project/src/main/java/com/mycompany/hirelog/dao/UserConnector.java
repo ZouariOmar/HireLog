@@ -1,37 +1,53 @@
 /**
  * UserHelper.java
  *
- * User CRUD actions manager
+ * `users` DAO
  *
- * <p>Note: This class only manage user-database part</p>
+ * <p>`users` CRUD</p>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 28/07/2025
- * @link <a href="https://github.com/ZouariOmar/HireLog/blob/main/project/src/main/java/com/mycompany/HireLog/util/UserHelper.java">GitHub Source</a> 
+ * 
+ * <a href="https://github.com/ZouariOmar/HireLog/blob/main/project/src/main/java/com.mycompany.hirelog/util/UserConnector.java">
+ *  UserConnector.java
+ * </a> 
  */
 
-// `UserHelper` pkg name
-package com.mycompany.HireLog.database;
+// `UserConnector` pkg name
+package com.mycompany.hirelog.dao;
 
-// Java Sql core imports
+// Core java imports
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
 
-// `log4j` java imports
-import org.apache.logging.log4j.Logger;
+// Log4j java imports
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-// Java BCrypt import
+// BCrypt java import
 import org.springframework.security.crypto.bcrypt.BCrypt;
 
 // Java custom imports
-import com.mycompany.HireLog.model.User;
+import com.mycompany.hirelog.model.User;
 
 public final class UserConnector {
+
   private static final Logger _LOGGER = LogManager.getLogger();
+
+  private static final String _IS_USER_QUERY = "SELECT * FROM users WHERE username = ?";
+
+  private static final String _LAST_AVAILBLE_USER_ID_QUERY = "SELECT MAX(rowid) AS next_id FROM users";
+
+  private static final String _IS_EXISTED_USER_EMAIL_QUERY = "SELECT email from users WHERE email = ?";
+
+  private static final String _CREATE_USER_QUERY = "INSERT INTO users (username, password, email) VALUES(?, ?, ?)";
+
+  private static final String _EMAIL_REGEX_PATTERN = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+
+  private static final String _PASSWORD_REGEX_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
 
   /**
    * Verify the validity of the given `username` and `password` and return the
@@ -66,15 +82,20 @@ public final class UserConnector {
     ResultSet res = null;
 
     try {
-      pstmt = Database.connect().prepareStatement("SELECT * FROM users WHERE username = ?");
+      pstmt = DatabaseManager.connect().prepareStatement(_IS_USER_QUERY);
+
       pstmt.setString(1, username);
+
       res = pstmt.executeQuery();
       _LOGGER.info("`isUser` query executed successfully!");
+
       if (res.next() && BCrypt.checkpw(password, res.getString("password")))
         return res.getInt("user_id");
+
     } catch (SQLException e) {
       _LOGGER.error("`isUser` query Failed!");
       e.printStackTrace();
+
     } finally {
       try {
         if (res != null)
@@ -85,6 +106,7 @@ public final class UserConnector {
         e.printStackTrace();
       }
     }
+
     return -1;
   }
 
@@ -92,14 +114,19 @@ public final class UserConnector {
     PreparedStatement pstmt = null;
 
     try {
-      pstmt = Database.connect().prepareStatement("SELECT email from users WHERE email = ?");
+      pstmt = DatabaseManager.connect().prepareStatement(_IS_EXISTED_USER_EMAIL_QUERY);
+
       pstmt.setString(1, email);
+
       ResultSet res = pstmt.executeQuery();
       _LOGGER.info("`createUser` query executed successfully!");
+
       return res.next();
+
     } catch (SQLException e) {
       _LOGGER.error("`createUser` query Failed!");
       e.printStackTrace();
+
     } finally {
       try {
         if (pstmt != null)
@@ -108,6 +135,7 @@ public final class UserConnector {
         e.printStackTrace();
       }
     }
+
     return false;
   }
 
@@ -145,16 +173,20 @@ public final class UserConnector {
     String username = user.username().toLowerCase() + Integer.toString(getLastAvailbleId());
 
     try {
-      pstmt = Database.connect().prepareStatement("INSERT INTO users (username, password, email) VALUES(?, ?, ?)");
+      pstmt = DatabaseManager.connect().prepareStatement(_CREATE_USER_QUERY);
+
       pstmt.setString(1, username); // If `username` null, it will be catch it by `SQLException`
       pstmt.setString(2, BCrypt.hashpw(user.password(), BCrypt.gensalt()));
       pstmt.setString(3, user.email());
+
       pstmt.executeUpdate(); // Use executeUpdate() — not executeQuery() — for INSERT, UPDATE, or DELETE.
       _LOGGER.info("`createUser` query executed successfully!");
+
       return username; // Return `username`
     } catch (SQLException e) {
       _LOGGER.error("`createUser` query Failed!");
       e.printStackTrace();
+
     } finally {
       try {
         if (pstmt != null)
@@ -163,35 +195,8 @@ public final class UserConnector {
         e.printStackTrace();
       }
     }
-    return null; // dummy
-  }
 
-  /**
-   * Get the last availble id based on `ROWID`
-   *
-   * <p>
-   * More detailed description or notes.
-   * </p>
-   *
-   * @return {@code int}
-   * @see https://www.sqlite.org/rowidtable.html
-   * @see #createUser
-   *
-   *      <pre>
-   * {@code
-   * String username = prename.toLowerCase() + name.toLowerCase() + Integer.toString(getLastAvailbleId());
-   * }</pre>
-   */
-  private static final int getLastAvailbleId() {
-    try (ResultSet rs = Database.connect().prepareStatement("SELECT MAX(rowid) AS next_id FROM users")
-        .executeQuery()) {
-      if (rs.next())
-        return rs.getInt("next_id");
-    } catch (SQLException e) {
-      _LOGGER.error("`getLastAvailbleId` query Failed!");
-      e.printStackTrace();
-    }
-    return -1;
+    return null; // dummy
   }
 
   /**
@@ -215,8 +220,7 @@ public final class UserConnector {
    * }</pre>
    */
   public static final boolean isEmail(String email) {
-    return Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE)
-        .matcher(email).matches();
+    return Pattern.compile(_EMAIL_REGEX_PATTERN, Pattern.CASE_INSENSITIVE).matcher(email).matches();
   }
 
   /**
@@ -247,8 +251,36 @@ public final class UserConnector {
    * }</pre>
    */
   public static final boolean isPassword(String password) {
-    return Pattern
-        .compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", Pattern.CASE_INSENSITIVE)
-        .matcher(password).matches();
+    return Pattern.compile(_PASSWORD_REGEX_PATTERN, Pattern.CASE_INSENSITIVE).matcher(password).matches();
+  }
+
+  /**
+   * Get the last availble id based on `ROWID`
+   *
+   * <p>
+   * More detailed description or notes.
+   * </p>
+   *
+   * @return {@code int}
+   * @see https://www.sqlite.org/rowidtable.html
+   * @see #createUser
+   *
+   *      <pre>
+   * {@code
+   * String username = prename.toLowerCase() + name.toLowerCase() + Integer.toString(getLastAvailbleId());
+   * }</pre>
+   */
+  private static final int getLastAvailbleId() {
+    try (ResultSet rs = DatabaseManager.connect().prepareStatement(_LAST_AVAILBLE_USER_ID_QUERY)
+        .executeQuery()) {
+      if (rs.next())
+        return rs.getInt("next_id");
+
+    } catch (SQLException e) {
+      _LOGGER.error("`getLastAvailbleId` query Failed!");
+      e.printStackTrace();
+    }
+
+    return -1;
   }
 } // UserHelper class

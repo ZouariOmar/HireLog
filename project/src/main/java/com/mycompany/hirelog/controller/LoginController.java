@@ -1,45 +1,57 @@
 /**
  * LoginController.java
  *
- * The controller of `Login.fxml` view
+ * `Login.fxml` controller class
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 27/07/2025
- * @see https://github.com/ZouariOmar/HireLog/tree/main/project/src/test/java/com/mycompany/HireLog/controller/LoginController.java
- */
+ * 
+ * <a href="https://github.com/ZouariOmar/HireLog/tree/main/project/src/test/java/com.mycompany.hirelog/controller/LoginController.java">
+ *  LoginController.java
+ * </a>
+*/
 
 // `LoginController` pkg name
-package com.mycompany.HireLog.controller;
+package com.mycompany.hirelog.controller;
 
-// Java core imports
+// Core java imports
 import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+// Log4j java imports
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+// Custom java imports
+import com.mycompany.hirelog.dao.UserConnector;
+import com.mycompany.hirelog.view.ViewUtils;
 
 // JavaFx imports
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage;
-import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.image.ImageView;
-import javafx.event.ActionEvent;
-
-// `log4j` java imports
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-
-// `util` Cutom imports
-import com.mycompany.HireLog.database.*;
-import com.mycompany.HireLog.ui.UiHelper;
+import javafx.stage.Stage;
 
 public class LoginController {
+
   private static final Logger _LOGGER = LogManager.getLogger();
+
+  @FXML // ResourceBundle that was given to the FXMLLoader
+  private ResourceBundle resources;
+
+  @FXML // URL location of the FXML file that was given to the FXMLLoader
+  private URL location;
 
   @FXML // fx:id="banner"
   private ImageView banner; // Value injected by FXMLLoader
@@ -75,26 +87,26 @@ public class LoginController {
    */
   @FXML
   private void onLoginAction(ActionEvent event) throws IOException {
-    final String enterdUsername = username.getText(), eneterdPassword = password.getText();
+    final String enterdUsername = username.getText();
 
     if (enterdUsername.isEmpty()
         || enterdUsername.isBlank()) { // Display "Username field is empty/blank!" for 3s
-      UiHelper.showStatusMsg(status, "Username field is empty/blank!");
+      ViewUtils.showStatusMsg(status, "Username field is empty/blank!");
       _LOGGER.warn("Login Access Failed: `enterdUsername` isEmpty/isBlank!");
       return;
     }
 
-    if (eneterdPassword.isEmpty()
+    if (password.getText().isEmpty()
         || enterdUsername.isBlank()) { // Display "Password field is empty/blank!" for 3s
-      UiHelper.showStatusMsg(status, "Password field is empty/blank!");
+      ViewUtils.showStatusMsg(status, "Password field is empty/blank!");
       _LOGGER.warn("Login Access Failed: `eneterdPassword` isEmpty/isBlank!");
       return;
     }
 
-    int userId = UserConnector.isUser(enterdUsername, eneterdPassword);
+    int userId = UserConnector.isUser(enterdUsername, password.getText());
     if (userId != -1) { // Login success!
       FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Dashboard.fxml"));
-      loader.setControllerFactory(controllerClass -> {
+      loader.setControllerFactory(_ -> {
         return new DashboardController(userId);
       });
       Parent root = loader.load();
@@ -104,7 +116,7 @@ public class LoginController {
       stage.show();
       _LOGGER.info("Login Access Success: `{}` accessed!", enterdUsername);
     } else { // Display "Username or password incoreect!" for 3s
-      UiHelper.showStatusMsg(status, "Username or password incoreect!");
+      ViewUtils.showStatusMsg(status, "Username or password incoreect!");
       _LOGGER.warn("Login Access Failed: `{}` want to access!", enterdUsername);
     }
   }

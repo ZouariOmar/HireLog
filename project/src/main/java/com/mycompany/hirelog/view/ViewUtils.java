@@ -8,11 +8,11 @@
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
  * @since 31/07/2025
- * @see https://github.com/ZouariOmar/HireLog/tree/main/project/src/test/java/com/mycompany/HireLog/util/UiHelper.java
+ * @see https://github.com/ZouariOmar/HireLog/tree/main/project/src/test/java/com.mycompany.hirelog/util/UiHelper.java
  */
 
 // UiHelper pkg name
-package com.mycompany.HireLog.ui;
+package com.mycompany.hirelog.view;
 
 // Java javafx imports
 import javafx.scene.control.Label;
@@ -31,15 +31,15 @@ import javafx.util.Duration;
  * <li>Default text color: RED</li>
  * </ul>
  *
- * @see com.mycompany.HireLog.controller.LoginController
- * @see com.mycompany.HireLog.controller.SignUpController
+ * @see com.mycompany.hirelog.controller.LoginController
+ * @see com.mycompany.hirelog.controller.SignUpController
  *
  *      <pre>
  * {@code
  * UiHelper.showStatusMsg(status, "Username or password incoreect!");
  * }</pre>
  */
-public class UiHelper {
+public class ViewUtils {
   public final static void showStatusMsg(final Label status, final String msg, final Color color, final int seconds) {
     PauseTransition visiblePause = new PauseTransition(Duration.seconds(seconds));
     status.setText(msg);

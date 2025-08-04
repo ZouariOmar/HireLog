@@ -1,43 +1,50 @@
 /**
- * Clas.java
+ * HireLogFormController.java
  *
- * 'HireLogDialog.fxml' Controller Class
+ * 'HireLogDialog.fxml' controller class
  *
- * <p>Detailed explanation of the class, its responsibilities, and usage.</p>
+ * <p>None</p>
  *
  * @author @ZouariOmar (zouariomar20@gmail.com)
  * @version 1.0
- * @since YYYY-MM-DD
- * @deprecated Reason and alternative
- * @see RelatedClassOrDocumentation
- * @serial Serialization details (if applicable)
+ * @since 04/08/2025
+ *
+ * <a href="https://github.com/ZouariOmar/HireLog/tree/main/project/src/main/java/com/mycompany/HireLog/controller/HireLogFormController.java">
+ *  HireLogFormController.java
+ * </a>
  */
 
-// HireLogDialogController pkg name
-package com.mycompany.HireLog.controller;
+// `HireLogDialogController` pkg name
+package com.mycompany.hirelog.controller;
+
+// Core java imports
+import java.net.URL;
+import java.util.ResourceBundle;
+
+// Custom java imports
+import com.mycompany.hirelog.dao.HireLogConnector;
+import com.mycompany.hirelog.flag.HireLogEvents;
+import com.mycompany.hirelog.model.HireLog;
 
 // Javafx imports
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 
-// Java custom imports
-import com.mycompany.HireLog.status.HireLogEvents;
-import com.mycompany.HireLog.database.HireLogConnector;
-import com.mycompany.HireLog.model.HireLog;
-
-public class HireLogDialogController {
+public class HireLogFormController {
 
   private final int userId;
 
-  public HireLogDialogController(int userId) {
-    this.userId = userId;
-  }
+  @FXML // ResourceBundle that was given to the FXMLLoader
+  private ResourceBundle resources;
+
+  @FXML // URL location of the FXML file that was given to the FXMLLoader
+  private URL location;
 
   @FXML // fx:id="Attachments"
   private Button Attachments; // Value injected by FXMLLoader
@@ -60,8 +67,12 @@ public class HireLogDialogController {
   @FXML // fx:id="submit"
   private Button submit; // Value injected by FXMLLoader
 
+  public HireLogFormController(final int userId) {
+    this.userId = userId;
+  }
+
   @FXML
-  void onSubmitAction(ActionEvent event) {
+  void onSubmitAction(final ActionEvent event) {
     HireLogConnector
         .create(new HireLog(
             userId,
