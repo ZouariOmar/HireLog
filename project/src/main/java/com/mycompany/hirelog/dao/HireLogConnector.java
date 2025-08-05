@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// Custom java imports²
+// Custom java imports
 import com.mycompany.hirelog.model.HireLog;
 import com.mycompany.hirelog.view.LogTableUi;
 
@@ -42,6 +42,11 @@ public class HireLogConnector {
 
   private static final String _FETCH_ALL_QUERY = "SELECT * FROM hire_logs WHERE user_id = ?";
 
+  private static final String _LAST_INSERTED_HIRE_LOGS_ID_QUERY = "SELECT last_insert_rowid() AS last_id FROM hire_logs";
+
+  /**
+   * @param hireLog
+   */
   public static void create(final HireLog hireLog) {
     PreparedStatement pstmt = null;
 
@@ -49,29 +54,33 @@ public class HireLogConnector {
       pstmt = DatabaseManager.connect().prepareStatement(_CTREATE_QUERY);
 
       pstmt.setInt(1, hireLog.userId());
-      pstmt.setString(2, hireLog.event());
+      pstmt.setString(2, hireLog.eventType());
       pstmt.setDate(3, hireLog.date());
       pstmt.setString(4, hireLog.comments());
 
       pstmt.executeUpdate();
-      _LOGGER.info("`HireLogHelper#create` query executed successfully!");
+      _LOGGER.info("`HireLogConnector#create` query executed successfully!");
 
-    } catch (SQLException e) {
-      _LOGGER.error("`HireLogHelper#create` query Failed!");
+    } catch (final SQLException e) {
+      _LOGGER.error("`HireLogConnector#create` query Failed!");
       e.printStackTrace();
 
     } finally {
       try {
         if (pstmt != null)
           pstmt.close();
-      } catch (Exception e) {
+      } catch (final Exception e) {
         e.printStackTrace();
       }
     }
   }
 
+  /**
+   * @param userId
+   * @return
+   */
   public static final ObservableList<LogTableUi> fetchAll(final int userId) {
-    ObservableList<LogTableUi> hireLogs = FXCollections.observableArrayList();
+    final ObservableList<LogTableUi> hireLogs = FXCollections.observableArrayList();
     PreparedStatement pstmt = null;
     ResultSet res = null;
 
@@ -81,10 +90,10 @@ public class HireLogConnector {
       pstmt.setInt(1, userId);
 
       res = pstmt.executeQuery();
-      _LOGGER.info("`HireLogHelper#fetch` query executed successfully!");
+      _LOGGER.info("`HireLogConnector#fetchAll` query executed successfully!");
 
       while (res.next()) {
-        LogTableUi hireLog = new LogTableUi(
+        final LogTableUi hireLog = new LogTableUi(
             res.getInt("log_id"),
             res.getString("event_type"),
             res.getDate("event_timestamp"),
@@ -92,8 +101,8 @@ public class HireLogConnector {
         hireLogs.add(hireLog);
       }
 
-    } catch (SQLException e) {
-      _LOGGER.error("`HireLogHelper#create` query Failed!");
+    } catch (final SQLException e) {
+      _LOGGER.error("`HireLogConnector#fetchAll` query Failed!");
       e.printStackTrace();
 
     } finally {
@@ -102,11 +111,27 @@ public class HireLogConnector {
           pstmt.close();
         if (res != null)
           res.close();
-      } catch (Exception e) {
+      } catch (final Exception e) {
         e.printStackTrace();
       }
     }
 
     return hireLogs;
+  }
+
+  /**
+   * @return {@code int}
+   */
+  public static final int getLastInsertedId() {
+    try (ResultSet rs = DatabaseManager.connect().prepareStatement(_LAST_INSERTED_HIRE_LOGS_ID_QUERY).executeQuery()) {
+      if (rs.next())
+        return rs.getInt("last_id");
+
+    } catch (final SQLException e) {
+      _LOGGER.error("`HireLogConnector#getLastInsertedId` query Failed!");
+      e.printStackTrace();
+    }
+
+    return -1; // Query failed
   }
 }

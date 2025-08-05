@@ -14,10 +14,15 @@
 // UiHelper pkg name
 package com.mycompany.hirelog.view;
 
+import java.util.function.Function;
+
 // Java javafx imports
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
 import javafx.animation.PauseTransition;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
@@ -40,22 +45,58 @@ import javafx.util.Duration;
  * }</pre>
  */
 public class ViewUtils {
+
+  /**
+   * @param status
+   * @param msg
+   * @param color
+   * @param seconds
+   */
   public final static void showStatusMsg(final Label status, final String msg, final Color color, final int seconds) {
-    PauseTransition visiblePause = new PauseTransition(Duration.seconds(seconds));
+    final PauseTransition visiblePause = new PauseTransition(Duration.seconds(seconds));
     status.setText(msg);
     status.setTextFill(color);
     status.setVisible(true);
-    visiblePause.setOnFinished(e -> {
+    visiblePause.setOnFinished(_ -> {
       status.setVisible(false);
     });
     visiblePause.play();
   }
 
+  /**
+   * @param status
+   * @param msg
+   */
   public final static void showStatusMsg(final Label status, final String msg) {
     showStatusMsg(status, msg, Color.RED, 3);
   }
 
+  /**
+   * @param status
+   * @param msg
+   * @param color
+   */
   public final static void showStatusMsg(final Label status, final String msg, final Color color) {
     showStatusMsg(status, msg, color, 3);
+  }
+
+  /**
+   * @param imageView
+   * @param gifPath
+   * @param seconds
+   */
+  public final static void playGifAnimation(final ImageView imageView, final String gifPath, final double seconds) {
+    final Image initialImage = imageView.getImage();
+    imageView.setImage(new Image(gifPath));
+    final PauseTransition visiblePause = new PauseTransition(Duration.seconds(seconds));
+    visiblePause.setOnFinished(_ -> imageView.setImage(initialImage));
+    visiblePause.play();
+  }
+
+  public final static void disableButton(final Button button, double seconds) {
+    button.setDisable(true);
+    final PauseTransition visiblePause = new PauseTransition(Duration.seconds(seconds));
+    visiblePause.setOnFinished(_ -> button.setDisable(false));
+    visiblePause.play();
   }
 }

@@ -17,9 +17,5 @@
 // `HireLog` pkg name
 package com.mycompany.hirelog.model;
 
-public record HireLog(int userId, String event, java.sql.Date date, String comments, Integer logId) {
-
-  public HireLog(int userId, String event, java.sql.Date date, String comments) {
-    this(userId, event, date, comments, null);
-  }
+public record HireLog(int userId, String eventType, java.sql.Date date, String comments) {
 } // HireLog record

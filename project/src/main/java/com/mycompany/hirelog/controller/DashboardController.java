@@ -30,9 +30,9 @@ import org.apache.logging.log4j.Logger;
 // Custom java imports
 import com.mycompany.hirelog.dao.HireLogConnector;
 import com.mycompany.hirelog.view.LogTableUi;
+import com.mycompany.hirelog.view.ViewUtils;
 
 // JavaFx imports
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -44,6 +44,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class DashboardController {
@@ -91,6 +92,12 @@ public class DashboardController {
   @FXML // fx:id="searchField"
   private TextField searchField; // Value injected by FXMLLoader
 
+  @FXML // fx:id="refrechImg"
+  private ImageView refrechImg; // Value injected by FXMLLoader
+
+  @FXML // fx:id="removeLogBtn"
+  private Button refrechBtn; // Value injected by FXMLLoader
+
   public DashboardController(final int userId) {
     this.userId = userId;
   }
@@ -108,6 +115,13 @@ public class DashboardController {
     stage.show();
   }
 
+  @FXML
+  void onRefrechBtnAction(ActionEvent event) {
+    ViewUtils.disableButton(refrechBtn, 1);
+    ViewUtils.playGifAnimation(refrechImg, "/assets/icons8-refresh.gif", 1);
+    logTable.setItems(HireLogConnector.fetchAll(userId)); // Fetch all items agin :(
+  }
+
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
     assert addLogBtn != null : "fx:id=\"addLogBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
@@ -121,6 +135,8 @@ public class DashboardController {
     assert removeLogBtn != null : "fx:id=\"removeLogBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert searchField != null : "fx:id=\"searchField\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert selectCol != null : "fx:id=\"selectCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert refrechImg != null : "fx:id=\"refrechImg\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert refrechBtn != null : "fx:id=\"refrechBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
 
     // Setup cell value factories
     logIdCol.setCellValueFactory(new PropertyValueFactory<>("logId"));

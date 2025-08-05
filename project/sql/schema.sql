@@ -20,7 +20,6 @@ CREATE TABLE IF NOT EXISTS hire_log_attachments (
     attachment_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     log_id INTEGER NOT NULL,
     file_name TEXT NOT NULL,
-    file_type TEXT NOT NULL,           -- e.g., 'pdf', 'docx', 'image/png'
     file_data BLOB NOT NULL,  -- stores the entire file content
     uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 

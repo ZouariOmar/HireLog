@@ -39,7 +39,7 @@ public final class UserConnector {
 
   private static final String _IS_USER_QUERY = "SELECT * FROM users WHERE username = ?";
 
-  private static final String _LAST_AVAILBLE_USER_ID_QUERY = "SELECT MAX(rowid) AS next_id FROM users";
+  private static final String _AVAILBLE_USER_ID_QUERY = "SELECT MAX(rowid) AS next_id FROM users";
 
   private static final String _IS_EXISTED_USER_EMAIL_QUERY = "SELECT email from users WHERE email = ?";
 
@@ -170,7 +170,7 @@ public final class UserConnector {
    */
   public static final String createUser(User user) {
     PreparedStatement pstmt = null;
-    String username = user.username().toLowerCase() + Integer.toString(getLastAvailbleId());
+    String username = user.username().toLowerCase() + Integer.toString(getAvailbleUserId());
 
     try {
       pstmt = DatabaseManager.connect().prepareStatement(_CREATE_USER_QUERY);
@@ -255,23 +255,24 @@ public final class UserConnector {
   }
 
   /**
-   * Get the last availble id based on `ROWID`
+   * Get an availble id based on `ROWID`
    *
    * <p>
-   * More detailed description or notes.
+   * None
    * </p>
    *
    * @return {@code int}
-   * @see https://www.sqlite.org/rowidtable.html
    * @see #createUser
+   *
+   *      <a href="https://www.sqlite.org/rowidtable.html">rowidtable</a>
    *
    *      <pre>
    * {@code
    * String username = prename.toLowerCase() + name.toLowerCase() + Integer.toString(getLastAvailbleId());
    * }</pre>
    */
-  private static final int getLastAvailbleId() {
-    try (ResultSet rs = DatabaseManager.connect().prepareStatement(_LAST_AVAILBLE_USER_ID_QUERY)
+  private static final int getAvailbleUserId() {
+    try (ResultSet rs = DatabaseManager.connect().prepareStatement(_AVAILBLE_USER_ID_QUERY)
         .executeQuery()) {
       if (rs.next())
         return rs.getInt("next_id");
