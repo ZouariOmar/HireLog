@@ -1,9 +1,27 @@
+/**
+ * LogTableUi.java
+ *
+ * Dashboard table descriper
+ *
+ * <p>None</p>
+ *
+ * @author @ZouariOmar (zouariomar20@gmail.com)
+ * @version 1.0
+ * @since 08/06/2025
+ * @see com.mycompany.hirelog.controller#DashboardController
+ */
 
+// `LogTableUi` pkg name
 package com.mycompany.hirelog.view;
 
+// Core Java imports
 import java.sql.Date;
 
-import javafx.beans.property.*;
+// JavaFx imports
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 public class LogTableUi {
   private final SimpleBooleanProperty selected;

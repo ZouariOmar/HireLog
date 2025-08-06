@@ -88,9 +88,30 @@ public class HireLogFormController {
   @FXML // fx:id="status"
   private Label status; // Value injected by FXMLLoader
 
+  /**
+   * @param userId
+   */
   public HireLogFormController(final int userId) {
     this.userId = userId;
     selectedFiles = null;
+  }
+
+  /**
+   * Create new #HireLogFormController(final HireLog, final HireLogAttachment)
+   * object
+   *
+   * <p>
+   * Note: We use this constructor only for EDIT event
+   * </p>
+   *
+   * @param jobInfo     {@code HireLog}
+   * @param attachments {@code HireLogAttachment}
+   *
+   * @see DashboardController
+   */
+  public HireLogFormController(final HireLog jobInfo, final HireLogAttachment attachments) {
+    this.userId = jobInfo.userId();
+    // ...
   }
 
   @FXML
@@ -103,12 +124,13 @@ public class HireLogFormController {
             java.sql.Date.valueOf(date.getValue()),
             comments.getText()));
 
-    int lastHireLogId = HireLogConnector.getLastInsertedId(); // Get the inserted `hire_logs` `log_id`
+    final int lastHireLogId = HireLogConnector.getLastInsertedId(); // Get the inserted `hire_logs` `log_id`
 
     if (selectedFiles != null) {
-      for (File file : selectedFiles) { // Insert `hire_log_attachments` data (TODO: Set attachments number limmiter)
-        byte[] fileData = FileUtils.fileToByteArray(file.getAbsolutePath());
-        String fileName = file.getName();
+      for (final File file : selectedFiles) { // Insert `hire_log_attachments` data (TODO: Set attachments number
+                                              // limmiter)
+        final byte[] fileData = FileUtils.fileToByteArray(file.getAbsolutePath());
+        final String fileName = file.getName();
         HireLogAttachmentConnector.create(new HireLogAttachment(
             lastHireLogId,
             fileName,
@@ -121,8 +143,8 @@ public class HireLogFormController {
   }
 
   @FXML
-  void onAttachmentAction(ActionEvent event) {
-    FileChooser fileChooser = new FileChooser();
+  void onAttachmentAction(final ActionEvent event) {
+    final FileChooser fileChooser = new FileChooser();
     fileChooser.setTitle("Select file(s) to upload(s)");
     fileChooser.setInitialDirectory(new File(System.getProperty("user.home"))); // Open `user/home/` directory
     fileChooser.getExtensionFilters().addAll( // Add file(s) filter(s)

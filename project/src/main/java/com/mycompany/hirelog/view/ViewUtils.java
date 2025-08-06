@@ -18,6 +18,7 @@ import java.util.function.Function;
 
 // Java javafx imports
 import javafx.animation.PauseTransition;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -98,5 +99,15 @@ public class ViewUtils {
     final PauseTransition visiblePause = new PauseTransition(Duration.seconds(seconds));
     visiblePause.setOnFinished(_ -> button.setDisable(false));
     visiblePause.play();
+  }
+
+  public final static void updateButtonStates(ObservableList<LogTableUi> items, Button editBtn, Button deleteBtn) {
+    for (LogTableUi item : items) {
+      item.selectedProperty().addListener((_, _, _) -> {
+        long selectedCount = items.stream().filter(LogTableUi::isSelected).count();
+        editBtn.setDisable(selectedCount == 0 || selectedCount > 1);
+        deleteBtn.setDisable(selectedCount == 0);
+      });
+    }
   }
 }

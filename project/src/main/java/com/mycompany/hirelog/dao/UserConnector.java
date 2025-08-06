@@ -92,7 +92,7 @@ public final class UserConnector {
       if (res.next() && BCrypt.checkpw(password, res.getString("password")))
         return res.getInt("user_id");
 
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       _LOGGER.error("`isUser` query Failed!");
       e.printStackTrace();
 
@@ -102,7 +102,7 @@ public final class UserConnector {
           res.close();
         if (pstmt != null)
           pstmt.close();
-      } catch (Exception e) {
+      } catch (final Exception e) {
         e.printStackTrace();
       }
     }
@@ -110,7 +110,7 @@ public final class UserConnector {
     return -1;
   }
 
-  public static final boolean isExistedEmail(String email) {
+  public static final boolean isExistedEmail(final String email) {
     PreparedStatement pstmt = null;
 
     try {
@@ -118,12 +118,12 @@ public final class UserConnector {
 
       pstmt.setString(1, email);
 
-      ResultSet res = pstmt.executeQuery();
+      final ResultSet res = pstmt.executeQuery();
       _LOGGER.info("`createUser` query executed successfully!");
 
       return res.next();
 
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       _LOGGER.error("`createUser` query Failed!");
       e.printStackTrace();
 
@@ -131,7 +131,7 @@ public final class UserConnector {
       try {
         if (pstmt != null)
           pstmt.close();
-      } catch (Exception e) {
+      } catch (final Exception e) {
         e.printStackTrace();
       }
     }
@@ -168,9 +168,9 @@ public final class UserConnector {
    * else                  // :)
    * }</pre>
    */
-  public static final String createUser(User user) {
+  public static final String createUser(final User user) {
     PreparedStatement pstmt = null;
-    String username = user.username().toLowerCase() + Integer.toString(getAvailbleUserId());
+    final String username = user.username().toLowerCase() + Integer.toString(getAvailbleUserId());
 
     try {
       pstmt = DatabaseManager.connect().prepareStatement(_CREATE_USER_QUERY);
@@ -183,7 +183,7 @@ public final class UserConnector {
       _LOGGER.info("`createUser` query executed successfully!");
 
       return username; // Return `username`
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       _LOGGER.error("`createUser` query Failed!");
       e.printStackTrace();
 
@@ -191,7 +191,7 @@ public final class UserConnector {
       try {
         if (pstmt != null)
           pstmt.close();
-      } catch (Exception e) {
+      } catch (final Exception e) {
         e.printStackTrace();
       }
     }
@@ -219,7 +219,7 @@ public final class UserConnector {
    *  // :)
    * }</pre>
    */
-  public static final boolean isEmail(String email) {
+  public static final boolean isEmail(final String email) {
     return Pattern.compile(_EMAIL_REGEX_PATTERN, Pattern.CASE_INSENSITIVE).matcher(email).matches();
   }
 
@@ -250,7 +250,7 @@ public final class UserConnector {
    *  // :)
    * }</pre>
    */
-  public static final boolean isPassword(String password) {
+  public static final boolean isPassword(final String password) {
     return Pattern.compile(_PASSWORD_REGEX_PATTERN, Pattern.CASE_INSENSITIVE).matcher(password).matches();
   }
 
@@ -277,7 +277,7 @@ public final class UserConnector {
       if (rs.next())
         return rs.getInt("next_id");
 
-    } catch (SQLException e) {
+    } catch (final SQLException e) {
       _LOGGER.error("`getLastAvailbleId` query Failed!");
       e.printStackTrace();
     }

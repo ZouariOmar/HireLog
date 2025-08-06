@@ -109,12 +109,14 @@ public class LoginController {
       loader.setControllerFactory(_ -> {
         return new DashboardController(userId);
       });
+
       Parent root = loader.load();
       Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
       stage.setTitle("HireLog - Sign up");
       stage.setScene(new Scene(root));
       stage.show();
-      _LOGGER.info("Login Access Success: `{}` accessed!", enterdUsername);
+      _LOGGER.info("Login Access Success: `{}` accessed with id `{}`!", enterdUsername, userId);
+
     } else { // Display "Username or password incoreect!" for 3s
       ViewUtils.showStatusMsg(status, "Username or password incoreect!");
       _LOGGER.warn("Login Access Failed: `{}` want to access!", enterdUsername);
