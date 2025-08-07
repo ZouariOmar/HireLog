@@ -150,13 +150,3 @@ public class LoginController {
     assert password != null : "fx:id=\"password\" was not injected: check your FXML file 'SignUp.fxml'.";
   }
 }
-
-// TODO: Make all resources paths in `LoginControllerPaths`
-enum LoginControllerPaths {
-
-}
-
-// TODO: Make all login status in `LoginControllerStatus`
-enum LoginControllerStatus {
-
-}

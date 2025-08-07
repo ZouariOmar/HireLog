@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -11,15 +12,22 @@
 <?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.input.KeyCodeCombination?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.paint.Color?>
 
 <AnchorPane focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.hirelog.controller.DashboardController">
   <children>
     <MenuBar layoutY="1.0" prefHeight="27.0" prefWidth="700.0">
-      <menus>
-        <Menu fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#onAboutMenuItemAction" text="About" />
-      </menus>
+      <Menu text="Help">
+            <items>
+               <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#onAboutMenuItemAction" text="About">
+                  <accelerator>
+                     <KeyCodeCombination alt="DOWN" code="A" control="UP" meta="UP" shift="UP" shortcut="UP" />
+                  </accelerator>
+               </MenuItem>
+            </items>
+      </Menu>
     </MenuBar>
     <Button fx:id="addLogBtn" layoutX="14.0" layoutY="52.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onAddLogBtnAction" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 25px;">
       <graphic>
@@ -48,20 +56,20 @@
         </ImageView>
       </graphic>
     </Button>
-      <Button fx:id="refrechBtn" layoutX="154.0" layoutY="52.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onRefrechBtnAction" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 25px;">
-         <graphic>
-            <ImageView fx:id="refrechImg" fitHeight="20.0" fitWidth="20.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../assets/icons8-refresh-32.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-    <TextField fx:id="searchField" layoutX="356.0" layoutY="52.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="333.0" promptText="Search..." />
+    <Button fx:id="refrechBtn" layoutX="154.0" layoutY="52.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onRefrechBtnAction" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 25px;">
+      <graphic>
+        <ImageView fx:id="refrechImg" fitHeight="20.0" fitWidth="20.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../assets/icons8-refresh-32.png" />
+          </image>
+        </ImageView>
+      </graphic>
+    </Button>
+    <TextField fx:id="searchField" layoutX="356.0" layoutY="52.0" minHeight="-Infinity" minWidth="-Infinity" onKeyReleased="#onSearchFieldKeyReleased" prefHeight="40.0" prefWidth="333.0" promptText="Search..." style="-fx-background-radius: 10px;" />
     <TableView fx:id="logTable" editable="true" layoutX="13.0" layoutY="100.0" prefHeight="300.0" prefWidth="676.0" tableMenuButtonVisible="true">
       <columns>
         <TableColumn fx:id="selectCol" prefWidth="75.0" sortable="false" />
-            <TableColumn fx:id="jobTitleCol" editable="false" prefWidth="100.0" text="Job Title" />
+        <TableColumn fx:id="jobTitleCol" editable="false" prefWidth="100.0" text="Job Title" />
         <TableColumn fx:id="eventCol" editable="false" prefWidth="100.0" text="Event" />
         <TableColumn fx:id="dateCol" editable="false" prefWidth="100.0" text="Date" />
         <TableColumn fx:id="commentsCol" editable="false" prefWidth="300.0" text="Comment(s)" />
