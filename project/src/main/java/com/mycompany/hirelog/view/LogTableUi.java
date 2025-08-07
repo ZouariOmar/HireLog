@@ -17,6 +17,9 @@ package com.mycompany.hirelog.view;
 // Core Java imports
 import java.sql.Date;
 
+// Custom java imports
+import com.mycompany.hirelog.model.HireLog;
+
 // JavaFx imports
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -24,20 +27,28 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class LogTableUi {
+  private final SimpleIntegerProperty logId;
   private final SimpleBooleanProperty selected;
   private final SimpleStringProperty event;
   private final SimpleObjectProperty<Date> date;
   private final SimpleStringProperty comments;
-  private final SimpleIntegerProperty logId;
-  private final SimpleStringProperty attachments;
+  private final SimpleStringProperty jobTitle;
 
-  public LogTableUi(int logId, String event, Date date, String comments) {
+  public LogTableUi(HireLog jobTracker) {
+    this.logId = new SimpleIntegerProperty(jobTracker.logId());
     this.selected = new SimpleBooleanProperty(false);
-    this.event = new SimpleStringProperty(event);
-    this.date = new SimpleObjectProperty<>(date);
-    this.comments = new SimpleStringProperty(comments);
-    this.logId = new SimpleIntegerProperty(logId);
-    this.attachments = new SimpleStringProperty("");
+    this.event = new SimpleStringProperty(jobTracker.eventType());
+    this.date = new SimpleObjectProperty<>(jobTracker.date());
+    this.comments = new SimpleStringProperty(jobTracker.comments());
+    this.jobTitle = new SimpleStringProperty(jobTracker.jobTitle());
+  }
+
+  public SimpleStringProperty jobTitleProperty() {
+    return jobTitle;
+  }
+
+  public String getJobTitle() {
+    return jobTitle.get();
   }
 
   public boolean isSelected() {
@@ -78,13 +89,5 @@ public class LogTableUi {
 
   public SimpleIntegerProperty logIdProperty() {
     return logId;
-  }
-
-  public String getAttachments() {
-    return attachments.get();
-  }
-
-  public SimpleStringProperty attachmentsProperty() {
-    return attachments;
   }
 }

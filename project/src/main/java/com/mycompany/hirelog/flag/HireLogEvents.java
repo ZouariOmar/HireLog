@@ -21,11 +21,11 @@ package com.mycompany.hirelog.flag;
 
 public enum HireLogEvents {
 
-  APPLIED("Applied"),
-  INTERVIEWED("Interviewed"),
-  HIRED("Hired"),
-  REJECTED("Rejected"),
-  OTHER("Other");
+  APPLIED("applied"),
+  INTERVIEWED("interviewed"),
+  HIRED("hired"),
+  REJECTED("rejected"),
+  OTHER("other");
 
   private final String eventName;
 

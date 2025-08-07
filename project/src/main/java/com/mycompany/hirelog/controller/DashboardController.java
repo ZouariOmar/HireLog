@@ -20,11 +20,9 @@ package com.mycompany.hirelog.controller;
 // Core java imports
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 // Log4j java imports
 import org.apache.logging.log4j.LogManager;
@@ -67,41 +65,41 @@ public class DashboardController {
   @FXML // fx:id="addLogBtn"
   private Button addLogBtn; // Value injected by FXMLLoader
 
-  @FXML // fx:id="editBtn"
-  private Button editBtn; // Value injected by FXMLLoader
-
-  @FXML // fx:id="logTable"
-  private TableView<LogTableUi> logTable; // Value injected by FXMLLoader
-
-  @FXML // fx:id="attachmentsCol"
-  private TableColumn<LogTableUi, String> attachmentsCol; // Value injected by FXMLLoader
-
   @FXML // fx:id="commentsCol"
   private TableColumn<LogTableUi, String> commentsCol; // Value injected by FXMLLoader
 
   @FXML // fx:id="dateCol"
-  private TableColumn<LogTableUi, Date> dateCol; // Value injected by FXMLLoader
-
-  @FXML // fx:id="eventCol"
-  private TableColumn<LogTableUi, String> eventCol; // Value injected by FXMLLoader
-
-  @FXML // fx:id="logIdCol"
-  private TableColumn<LogTableUi, Integer> logIdCol; // Value injected by FXMLLoader
-
-  @FXML // fx:id="selectCol"
-  private TableColumn<LogTableUi, Boolean> selectCol; // Value injected by FXMLLoader
+  private TableColumn<LogTableUi, String> dateCol; // Value injected by FXMLLoader
 
   @FXML // fx:id="deleteBtn"
   private Button deleteBtn; // Value injected by FXMLLoader
 
-  @FXML // fx:id="searchField"
-  private TextField searchField; // Value injected by FXMLLoader
+  @FXML // fx:id="deleteImg"
+  private ImageView deleteImg; // Value injected by FXMLLoader
+
+  @FXML // fx:id="editBtn"
+  private Button editBtn; // Value injected by FXMLLoader
+
+  @FXML // fx:id="eventCol"
+  private TableColumn<LogTableUi, String> eventCol; // Value injected by FXMLLoader
+
+  @FXML // fx:id="jobTitleCol"
+  private TableColumn<LogTableUi, String> jobTitleCol; // Value injected by FXMLLoader
+
+  @FXML // fx:id="logTable"
+  private TableView<LogTableUi> logTable; // Value injected by FXMLLoader
+
+  @FXML // fx:id="refrechBtn"
+  private Button refrechBtn; // Value injected by FXMLLoader
 
   @FXML // fx:id="refrechImg"
   private ImageView refrechImg; // Value injected by FXMLLoader
 
-  @FXML // fx:id="deleteBtn"
-  private Button refrechBtn; // Value injected by FXMLLoader
+  @FXML // fx:id="searchField"
+  private TextField searchField; // Value injected by FXMLLoader
+
+  @FXML // fx:id="selectCol"
+  private TableColumn<LogTableUi, Boolean> selectCol; // Value injected by FXMLLoader
 
   public DashboardController(final int userId) {
     this.userId = userId;
@@ -124,7 +122,19 @@ public class DashboardController {
   void onRefrechBtnAction(ActionEvent e) {
     ViewUtils.disableButton(refrechBtn, 1);
     ViewUtils.playGifAnimation(refrechImg, "/assets/icons8-refresh.gif", 1);
-    logTable.setItems(HireLogConnector.fetchAll(userId)); // Fetch all items agin :(
+
+    // Fetch user data
+    ObservableList<LogTableUi> items = HireLogConnector.fetchAll(userId);
+
+    // Set Delete/Edit buttons event listeners for the new items
+    ViewUtils.updateButtonStates(items, editBtn, deleteBtn);
+
+    // Set the items
+    logTable.setItems(items);
+
+    // Disable edit and delete buttons
+    deleteBtn.setDisable(true);
+    editBtn.setDisable(true);
   }
 
   @FXML
@@ -144,37 +154,61 @@ public class DashboardController {
 
     // Remove the selected items from the table
     logTable.getItems().removeAll(selectedItems);
+
+    // Disable edit and delete buttons
+    deleteBtn.setDisable(true);
+    editBtn.setDisable(true);
+
+    // Play delete anaimation
+    ViewUtils.playGifAnimation(deleteImg, "/assets/icons8-delete.gif", 1);
   }
 
   @FXML
-  void onEditBtnAction(ActionEvent e) {
+  void onEditBtnAction(ActionEvent e) throws IOException {
+    for (LogTableUi item : logTable.getItems()) {
+      if (item.isSelected()) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HireLogForm.fxml"));
+        loader.setControllerFactory(_ -> {
+          return new HireLogFormController(userId, item);
+        });
+        Parent root = loader.load();
+        Stage stage = new Stage();
+        stage.setTitle("Add New Job");
+        stage.setScene(new Scene(root));
+        stage.show();
+        break;
+      }
+    }
+  }
+
+  @FXML
+  void onAboutMenuItemAction(ActionEvent e) {
 
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
     assert addLogBtn != null : "fx:id=\"addLogBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
-    assert attachmentsCol != null : "fx:id=\"attachmentsCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert commentsCol != null : "fx:id=\"commentsCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert dateCol != null : "fx:id=\"dateCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert deleteBtn != null : "fx:id=\"deleteBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert deleteImg != null : "fx:id=\"deleteImg\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert editBtn != null : "fx:id=\"editBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert eventCol != null : "fx:id=\"eventCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
-    assert logIdCol != null : "fx:id=\"logIdCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert jobTitleCol != null : "fx:id=\"jobTitleCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert logTable != null : "fx:id=\"logTable\" was not injected: check your FXML file 'Dashboard.fxml'.";
-    assert deleteBtn != null : "fx:id=\"deleteBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert refrechBtn != null : "fx:id=\"refrechBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
+    assert refrechImg != null : "fx:id=\"refrechImg\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert searchField != null : "fx:id=\"searchField\" was not injected: check your FXML file 'Dashboard.fxml'.";
     assert selectCol != null : "fx:id=\"selectCol\" was not injected: check your FXML file 'Dashboard.fxml'.";
-    assert refrechImg != null : "fx:id=\"refrechImg\" was not injected: check your FXML file 'Dashboard.fxml'.";
-    assert refrechBtn != null : "fx:id=\"refrechBtn\" was not injected: check your FXML file 'Dashboard.fxml'.";
 
     // Setup cell value factories
-    logIdCol.setCellValueFactory(new PropertyValueFactory<>("logId"));
+    selectCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
+    selectCol.setCellFactory(CheckBoxTableCell.forTableColumn(selectCol));
+    jobTitleCol.setCellValueFactory(new PropertyValueFactory<>("jobTitle"));
     eventCol.setCellValueFactory(new PropertyValueFactory<>("event"));
     dateCol.setCellValueFactory(new PropertyValueFactory<>("date"));
     commentsCol.setCellValueFactory(new PropertyValueFactory<>("comments"));
-    attachmentsCol.setCellValueFactory(new PropertyValueFactory<>("attachments"));
-    selectCol.setCellValueFactory(new PropertyValueFactory<>("selected"));
-    selectCol.setCellFactory(CheckBoxTableCell.forTableColumn(selectCol));
 
     // Fetch user data
     ObservableList<LogTableUi> items = HireLogConnector.fetchAll(userId);

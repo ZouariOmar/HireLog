@@ -157,15 +157,15 @@ init() {
       -DinteractiveMode=${MAVEN_INTERACTIVE_MODE} \
       -DoutputDirectory=${PROJECT_DIR} \
       -Dversion=${PROJECT_VERSION} \
-      -Djavafx-version=${MAVEN_JAVAFX_VERSION}
+      -Djavafx-version="${MAVEN_JAVAFX_VERSION}"
   elif [ ${PROJECT_BUILDER} = "gradle" ]; then
     cd ${PROJECT_DIR} &&
       gradle init \
-        --type ${GRADLE_PROJECT_TYPE} \
+        --type "${GRADLE_PROJECT_TYPE}" \
         --project-name "${PROJECT_NAME}" \
-        --dsl ${GRADLE_DSL} \
+        --dsl "${GRADLE_DSL}" \
         --package "${GROUP_ID}" \
-        --test-framework ${GRADLE_TEST_FRAMEWORK}
+        --test-framework "${GRADLE_TEST_FRAMEWORK}"
   fi
 
   # shellcheck disable=SC2181

@@ -39,7 +39,9 @@ public class HireLogConnector {
 
   private static final Logger _LOGGER = LogManager.getLogger();
 
-  private static final String _CTREATE_QUERY = "INSERT INTO hire_logs (user_id, event_type, event_timestamp, comments) VALUES(?, ?, ?, ?)";
+  private static final String _CTREATE_QUERY = "INSERT INTO hire_logs (user_id, job_title, event_type, event_date, comments) VALUES(?, ?, ?, ?, ?)";
+
+  private static final String _UPDATE_QUERY = "UPDATE hire_logs SET job_title = ?, event_type = ?, event_date = ?, comments = ? WHERE user_id = ? AND log_id = ?";
 
   private static final String _FETCH_ALL_QUERY = "SELECT * FROM hire_logs WHERE user_id = ?";
 
@@ -50,22 +52,56 @@ public class HireLogConnector {
   /**
    * @param hireLog
    */
-  public static void create(final HireLog hireLog) {
+  public static final void create(final HireLog hireLog) {
     PreparedStatement pstmt = null;
 
     try {
       pstmt = DatabaseManager.connect().prepareStatement(_CTREATE_QUERY);
 
       pstmt.setInt(1, hireLog.userId());
-      pstmt.setString(2, hireLog.eventType());
-      pstmt.setDate(3, hireLog.date());
-      pstmt.setString(4, hireLog.comments());
+      pstmt.setString(2, hireLog.jobTitle());
+      pstmt.setString(3, hireLog.eventType());
+      pstmt.setDate(4, hireLog.date());
+      pstmt.setString(5, hireLog.comments());
 
       pstmt.executeUpdate();
       _LOGGER.info("`HireLogConnector#create` query executed successfully!");
 
     } catch (final SQLException e) {
       _LOGGER.error("`HireLogConnector#create` query Failed!");
+      e.printStackTrace();
+
+    } finally {
+      try {
+        if (pstmt != null)
+          pstmt.close();
+      } catch (final Exception e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  /**
+   * @param jobTracker
+   */
+  public static final void update(final HireLog hireLog) {
+    PreparedStatement pstmt = null;
+
+    try {
+      pstmt = DatabaseManager.connect().prepareStatement(_UPDATE_QUERY);
+
+      pstmt.setString(1, hireLog.jobTitle());
+      pstmt.setString(2, hireLog.eventType());
+      pstmt.setDate(3, hireLog.date());
+      pstmt.setString(4, hireLog.comments());
+      pstmt.setInt(5, hireLog.userId());
+      pstmt.setInt(6, hireLog.logId());
+
+      pstmt.executeUpdate();
+      _LOGGER.info("`com.mycompany.hirelog.dao.HireLogConnector#update` query executed successfully!");
+
+    } catch (final SQLException e) {
+      _LOGGER.error("`com.mycompany.hirelog.dao.HireLogConnector#update` query Failed!");
       e.printStackTrace();
 
     } finally {
@@ -96,11 +132,13 @@ public class HireLogConnector {
       _LOGGER.info("`HireLogConnector#fetchAll` query executed successfully!");
 
       while (res.next()) {
-        final LogTableUi hireLog = new LogTableUi(
+        final LogTableUi hireLog = new LogTableUi(new HireLog(
             res.getInt("log_id"),
+            res.getInt("user_id"),
+            res.getString("job_title"),
             res.getString("event_type"),
-            res.getDate("event_timestamp"),
-            res.getString("comments"));
+            res.getDate("event_date"),
+            res.getString("comments")));
         hireLogs.add(hireLog);
       }
 
@@ -171,7 +209,7 @@ public class HireLogConnector {
     queryBuilder.append(")");
 
     PreparedStatement pstmt = null;
-    String finalDeleteQuery = queryBuilder.toString();
+    final String finalDeleteQuery = queryBuilder.toString();
     try {
       pstmt = DatabaseManager.connect().prepareStatement(finalDeleteQuery);
       pstmt.setInt(1, userId);

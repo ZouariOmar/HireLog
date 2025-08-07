@@ -18,10 +18,8 @@
 package com.mycompany.hirelog.controller;
 
 // Core java imports
-import java.io.File;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.ResourceBundle;
 
 // Log4j java imports
@@ -29,12 +27,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 // Custom java imports
-import com.mycompany.hirelog.dao.HireLogAttachmentConnector;
 import com.mycompany.hirelog.dao.HireLogConnector;
 import com.mycompany.hirelog.flag.HireLogEvents;
 import com.mycompany.hirelog.model.HireLog;
-import com.mycompany.hirelog.model.HireLogAttachment;
-import com.mycompany.hirelog.util.FileUtils;
+import com.mycompany.hirelog.view.LogTableUi;
 import com.mycompany.hirelog.view.ViewUtils;
 
 // Javafx imports
@@ -46,9 +42,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 public class HireLogFormController {
 
@@ -56,16 +51,13 @@ public class HireLogFormController {
 
   private final int userId;
 
-  private List<File> selectedFiles;
+  private final LogTableUi jobTrackerData;
 
   @FXML // ResourceBundle that was given to the FXMLLoader
   private ResourceBundle resources;
 
   @FXML // URL location of the FXML file that was given to the FXMLLoader
   private URL location;
-
-  @FXML // fx:id="attachments"
-  private Button attachments; // Value injected by FXMLLoader
 
   @FXML // fx:id="cancel"
   private Button cancel; // Value injected by FXMLLoader
@@ -79,99 +71,87 @@ public class HireLogFormController {
   @FXML // fx:id="event"
   private ChoiceBox<String> event; // Value injected by FXMLLoader
 
-  @FXML // fx:id="header"
-  private Label header; // Value injected by FXMLLoader
-
-  @FXML // fx:id="submit"
-  private Button submit; // Value injected by FXMLLoader
+  @FXML // fx:id="jobTitle"
+  private TextField jobTitle; // Value injected by FXMLLoader
 
   @FXML // fx:id="status"
   private Label status; // Value injected by FXMLLoader
+
+  @FXML // fx:id="submit"
+  private Button submit; // Value injected by FXMLLoader
 
   /**
    * @param userId
    */
   public HireLogFormController(final int userId) {
     this.userId = userId;
-    selectedFiles = null;
+    this.jobTrackerData = null;
   }
 
-  /**
-   * Create new #HireLogFormController(final HireLog, final HireLogAttachment)
-   * object
-   *
-   * <p>
-   * Note: We use this constructor only for EDIT event
-   * </p>
-   *
-   * @param jobInfo     {@code HireLog}
-   * @param attachments {@code HireLogAttachment}
-   *
-   * @see DashboardController
-   */
-  public HireLogFormController(final HireLog jobInfo, final HireLogAttachment attachments) {
-    this.userId = jobInfo.userId();
-    // ...
+  public HireLogFormController(final int userId, final LogTableUi row) {
+    this.userId = userId;
+    this.jobTrackerData = row;
   }
 
   @FXML
   void onSubmitAction(final ActionEvent e) {
+    String jobTitleText = jobTitle.getText();
 
-    HireLogConnector // Insert `hire_logs` data (1 query)
-        .create(new HireLog(
-            userId,
-            event.getValue().toLowerCase(),
-            java.sql.Date.valueOf(date.getValue()),
-            comments.getText()));
-
-    final int lastHireLogId = HireLogConnector.getLastInsertedId(); // Get the inserted `hire_logs` `log_id`
-
-    if (selectedFiles != null) {
-      for (final File file : selectedFiles) { // Insert `hire_log_attachments` data (TODO: Set attachments number
-                                              // limmiter)
-        final byte[] fileData = FileUtils.fileToByteArray(file.getAbsolutePath());
-        final String fileName = file.getName();
-        HireLogAttachmentConnector.create(new HireLogAttachment(
-            lastHireLogId,
-            fileName,
-            fileData));
-      }
+    if (jobTitleText.isEmpty() || jobTitleText.isBlank()) { // Display "JobTitle field is empty/blank!" for 3s
+      ViewUtils.showStatusMsg(status, "JobTitle field is empty/blank!");
+      _LOGGER.warn(
+          "com.mycompany.hirelog.controller.HireLogFormController#onSubmitAction: `jobTitle` isEmpty/isBlank!");
+      return;
     }
 
-    ViewUtils.showStatusMsg(status, "Job track added successfully!", Color.GREEN);
-    _LOGGER.info("`com.mycompany.hirelog.controller#onSubmitAction()` passed!");
-  }
+    boolean isInsert = (jobTrackerData == null);
+    HireLog hireLog = new HireLog(
+        (isInsert) ? null : jobTrackerData.getLogId(),
+        userId,
+        jobTitleText,
+        event.getValue(),
+        java.sql.Date.valueOf(date.getValue()),
+        comments.getText());
 
-  @FXML
-  void onAttachmentAction(final ActionEvent event) {
-    final FileChooser fileChooser = new FileChooser();
-    fileChooser.setTitle("Select file(s) to upload(s)");
-    fileChooser.setInitialDirectory(new File(System.getProperty("user.home"))); // Open `user/home/` directory
-    fileChooser.getExtensionFilters().addAll( // Add file(s) filter(s)
-        new FileChooser.ExtensionFilter("All Files", "*.*"));
-    selectedFiles = fileChooser.showOpenMultipleDialog(new Stage());
+    if (isInsert) { // Insert query
+      HireLogConnector.create(hireLog);
+      ViewUtils.showStatusMsg(status, "Job track added successfully!", Color.GREEN);
+
+    } else { // Update query
+      HireLogConnector.update(hireLog);
+      ViewUtils.showStatusMsg(status, "Job track updated successfully!", Color.GREEN);
+    }
+
+    _LOGGER.info("`com.mycompany.hirelog.controller#onSubmitAction()` passed!");
   }
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
   void initialize() {
-    assert attachments != null : "fx:id=\"Attachments\" was not injected: check your FXML file 'HireLogDialog.fxml'.";
-    assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'HireLogDialog.fxml'.";
-    assert comments != null : "fx:id=\"comments\" was not injected: check your FXML file 'HireLogDialog.fxml'.";
-    assert date != null : "fx:id=\"date\" was not injected: check your FXML file 'HireLogDialog.fxml'.";
-    assert event != null : "fx:id=\"event\" was not injected: check your FXML file 'HireLogDialog.fxml'.";
-    assert header != null : "fx:id=\"header\" was not injected: check your FXML file 'HireLogDialog.fxml'.";
-    assert submit != null : "fx:id=\"submit\" was not injected: check your FXML file 'HireLogDialog.fxml'.";
+    assert cancel != null : "fx:id=\"cancel\" was not injected: check your FXML file 'HireLogForm.fxml'.";
+    assert comments != null : "fx:id=\"comments\" was not injected: check your FXML file 'HireLogForm.fxml'.";
+    assert date != null : "fx:id=\"date\" was not injected: check your FXML file 'HireLogForm.fxml'.";
+    assert event != null : "fx:id=\"event\" was not injected: check your FXML file 'HireLogForm.fxml'.";
+    assert jobTitle != null : "fx:id=\"jobTitle\" was not injected: check your FXML file 'HireLogForm.fxml'.";
     assert status != null : "fx:id=\"status\" was not injected: check your FXML file 'HireLogForm.fxml'.";
+    assert submit != null : "fx:id=\"submit\" was not injected: check your FXML file 'HireLogForm.fxml'.";
 
     // Set `event` items
-    event.setItems(FXCollections.observableArrayList(
-        HireLogEvents.APPLIED.getEventName(),
-        HireLogEvents.INTERVIEWED.getEventName(),
-        HireLogEvents.HIRED.getEventName(),
-        HireLogEvents.REJECTED.getEventName(),
-        HireLogEvents.OTHER.getEventName()));
-    event.setValue(HireLogEvents.INTERVIEWED.getEventName()); // Set `Interviewed` as default option
+    event.setItems(
+        FXCollections.observableArrayList(
+            HireLogEvents.APPLIED.getEventName(),
+            HireLogEvents.INTERVIEWED.getEventName(),
+            HireLogEvents.HIRED.getEventName(),
+            HireLogEvents.REJECTED.getEventName(),
+            HireLogEvents.OTHER.getEventName()));
 
-    date.setValue(LocalDate.now());
+    if (jobTrackerData != null) {
+      this.jobTitle.setText(jobTrackerData.getJobTitle());
+      this.date.setValue(jobTrackerData.getDate().toLocalDate());
+      this.event.setValue(jobTrackerData.getEvent());
+      this.comments.setText(jobTrackerData.getComments());
+    } else {
+      event.setValue(HireLogEvents.INTERVIEWED.getEventName()); // Set `Interviewed` as default option
+      date.setValue(LocalDate.now());
+    }
   }
 } // HireLogDialogController class

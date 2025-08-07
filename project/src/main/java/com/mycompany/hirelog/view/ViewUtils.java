@@ -14,8 +14,6 @@
 // UiHelper pkg name
 package com.mycompany.hirelog.view;
 
-import java.util.function.Function;
-
 // Java javafx imports
 import javafx.animation.PauseTransition;
 import javafx.collections.ObservableList;

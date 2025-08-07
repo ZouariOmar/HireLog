@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -19,23 +18,7 @@
   <children>
     <MenuBar layoutY="1.0" prefHeight="27.0" prefWidth="700.0">
       <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Import" />
-            <MenuItem mnemonicParsing="false" text="Export" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About" />
-          </items>
-        </Menu>
+        <Menu fx:id="aboutMenuItem" mnemonicParsing="false" onAction="#onAboutMenuItemAction" text="About" />
       </menus>
     </MenuBar>
     <Button fx:id="addLogBtn" layoutX="14.0" layoutY="52.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onAddLogBtnAction" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 25px;">
@@ -58,7 +41,7 @@
     </Button>
     <Button fx:id="deleteBtn" disable="true" layoutX="107.0" layoutY="52.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onDeleteBtnAction" prefHeight="40.0" prefWidth="40.0" style="-fx-background-radius: 25px;">
       <graphic>
-        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="deleteImg" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@../assets/icons8-delete-50.png" />
           </image>
@@ -78,11 +61,10 @@
     <TableView fx:id="logTable" editable="true" layoutX="13.0" layoutY="100.0" prefHeight="300.0" prefWidth="676.0" tableMenuButtonVisible="true">
       <columns>
         <TableColumn fx:id="selectCol" prefWidth="75.0" sortable="false" />
-        <TableColumn fx:id="logIdCol" editable="false" prefWidth="70.0" text="Id" />
+            <TableColumn fx:id="jobTitleCol" editable="false" prefWidth="100.0" text="Job Title" />
         <TableColumn fx:id="eventCol" editable="false" prefWidth="100.0" text="Event" />
         <TableColumn fx:id="dateCol" editable="false" prefWidth="100.0" text="Date" />
-        <TableColumn fx:id="commentsCol" editable="false" prefWidth="132.0" text="comments" />
-        <TableColumn fx:id="attachmentsCol" editable="false" prefWidth="198.0" sortable="false" text="Attachments" />
+        <TableColumn fx:id="commentsCol" editable="false" prefWidth="300.0" text="Comment(s)" />
       </columns>
       <effect>
         <DropShadow blurType="TWO_PASS_BOX">
