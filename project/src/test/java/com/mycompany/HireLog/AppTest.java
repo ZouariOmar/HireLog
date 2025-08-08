@@ -1,5 +1,8 @@
 package com.mycompany.HireLog;
 
+import com.mycompany.hirelog.service.MailSenderService;
+import com.mycompany.hirelog.service.PasswordGeneratorService;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -9,15 +12,6 @@ import junit.framework.TestSuite;
  */
 public class AppTest extends TestCase {
   /**
-   * Create the test case
-   *
-   * @param testName name of the test case
-   */
-  public AppTest(String testName) {
-    super(testName);
-  }
-
-  /**
    * @return the suite of tests being tested
    */
   public static Test suite() {
@@ -25,9 +19,21 @@ public class AppTest extends TestCase {
   }
 
   /**
-   * Rigourous Test :-)
+   * Test the mail service
    */
-  public void testApp() {
-    assertTrue(true);
+  public static void testMailSenderService() {
+    MailSenderService.send(
+        "zouariomar20@gmail.com",
+        "do-not-reply - Reset Password",
+        "Reset Code: " + PasswordGeneratorService.generate(10));
+  }
+
+  /**
+   * Create the test case
+   *
+   * @param testName name of the test case
+   */
+  public AppTest(String testName) {
+    super(testName);
   }
 }

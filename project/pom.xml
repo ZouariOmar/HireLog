@@ -24,6 +24,9 @@
     <junit.version>4.13.2</junit.version>
     <log4j.version>2.20.0</log4j.version>
     <bcrypt.version>6.5.1</bcrypt.version>
+    <passay.version>1.6.6</passay.version>
+    <simplejavamail.version>8.12.6</simplejavamail.version>
+    <dotenv-java.version>3.0.0</dotenv-java.version>
   </properties>
 
   <name>${projectName}</name>
@@ -102,6 +105,27 @@
         <artifactId>spring-security-crypto</artifactId>
         <version>${bcrypt.version}</version>
       </dependency>
+
+      <!-- Java Passay (for password generation) -->
+      <dependency>
+        <groupId>org.passay</groupId>
+        <artifactId>passay</artifactId>
+        <version>${passay.version}</version>
+      </dependency>
+
+      <!-- Java Simple Mail Service -->
+      <dependency>
+        <groupId>org.simplejavamail</groupId>
+        <artifactId>simple-java-mail</artifactId>
+        <version>${simplejavamail.version}</version>
+      </dependency>
+
+      <!-- Java .env Manager -->
+      <dependency>
+        <groupId>io.github.cdimascio</groupId>
+        <artifactId>dotenv-java</artifactId>
+        <version>${dotenv-java.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -155,6 +179,24 @@
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-crypto</artifactId>
+    </dependency>
+
+    <!-- Java Passay (for password generation) -->
+    <dependency>
+      <groupId>org.passay</groupId>
+      <artifactId>passay</artifactId>
+    </dependency>
+
+    <!-- Java Simple Mail Service -->
+    <dependency>
+      <groupId>org.simplejavamail</groupId>
+      <artifactId>simple-java-mail</artifactId>
+    </dependency>
+
+    <!-- Java .env Manager -->
+    <dependency>
+      <groupId>io.github.cdimascio</groupId>
+      <artifactId>dotenv-java</artifactId>
     </dependency>
   </dependencies>
 

@@ -20,7 +20,6 @@
 package com.mycompany.hirelog.flag;
 
 public enum HireLogEvents {
-
   APPLIED("applied"),
   INTERVIEWED("interviewed"),
   HIRED("hired"),
