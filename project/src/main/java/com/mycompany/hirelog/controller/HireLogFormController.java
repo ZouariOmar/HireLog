@@ -22,7 +22,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-// Log4j java imports
+// `log4j` java imports
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +33,7 @@ import com.mycompany.hirelog.model.HireLog;
 import com.mycompany.hirelog.view.LogTableUi;
 import com.mycompany.hirelog.view.ViewUtils;
 
-// Javafx imports
+// `javafx` imports
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,7 +46,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
 public class HireLogFormController {
-
   private static final Logger _LOGGER = LogManager.getLogger();
 
   private final int userId;
@@ -95,7 +94,7 @@ public class HireLogFormController {
 
   @FXML
   void onSubmitAction(final ActionEvent e) {
-    String jobTitleText = jobTitle.getText();
+    final String jobTitleText = jobTitle.getText();
 
     if (jobTitleText.isEmpty() || jobTitleText.isBlank()) { // Display "JobTitle field is empty/blank!" for 3s
       ViewUtils.showStatusMsg(status, "JobTitle field is empty/blank!");
@@ -104,8 +103,8 @@ public class HireLogFormController {
       return;
     }
 
-    boolean isInsert = (jobTrackerData == null);
-    HireLog hireLog = new HireLog(
+    final boolean isInsert = (jobTrackerData == null);
+    final HireLog hireLog = new HireLog(
         (isInsert) ? null : jobTrackerData.getLogId(),
         userId,
         jobTitleText,

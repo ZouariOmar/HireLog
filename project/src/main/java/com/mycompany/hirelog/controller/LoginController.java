@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-// Log4j java imports
+// `log4j` java imports
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +28,7 @@ import org.apache.logging.log4j.Logger;
 import com.mycompany.hirelog.dao.UserConnector;
 import com.mycompany.hirelog.view.ViewUtils;
 
-// JavaFx imports
+// `javafx` imports
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -44,7 +44,6 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 public class LoginController {
-
   private static final Logger _LOGGER = LogManager.getLogger();
 
   @FXML // ResourceBundle that was given to the FXMLLoader
@@ -53,8 +52,8 @@ public class LoginController {
   @FXML // URL location of the FXML file that was given to the FXMLLoader
   private URL location;
 
-  @FXML // fx:id="banner"
-  private ImageView banner; // Value injected by FXMLLoader
+  @FXML // fx:id="forgetPassword"
+  private Hyperlink forgetPassword; // Value injected by FXMLLoader
 
   @FXML // fx:id="login"
   private Button login; // Value injected by FXMLLoader
@@ -74,6 +73,16 @@ public class LoginController {
   @FXML // fx:id="status"
   private Label status; // Value injected by FXMLLoader
 
+  @FXML
+  void onForgetPasswordAction(final ActionEvent event) throws IOException {
+    final Parent root = FXMLLoader.load(getClass().getResource("/fxml/ForgetPassword.fxml"));
+    // Get the current stage (window) from the event source and set the new scene
+    final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    stage.setTitle("HireLog - Sign up");
+    stage.setScene(new Scene(root));
+    stage.show();
+  }
+
   /**
    * Slot connected to `login` signals
    *
@@ -86,32 +95,30 @@ public class LoginController {
    * @see https://openjfx.io/javadoc/22/javafx.fxml/javafx/fxml/doc-files/introduction_to_fxml.html
    */
   @FXML
-  private void onLoginAction(ActionEvent event) throws IOException {
+  private void onLoginAction(final ActionEvent event) throws IOException {
     final String enterdUsername = username.getText();
 
-    if (enterdUsername.isEmpty()
-        || enterdUsername.isBlank()) { // Display "Username field is empty/blank!" for 3s
+    if (enterdUsername.isEmpty() || enterdUsername.isBlank()) { // Display "Username field is empty/blank!" for 3s
       ViewUtils.showStatusMsg(status, "Username field is empty/blank!");
       _LOGGER.warn("Login Access Failed: `enterdUsername` isEmpty/isBlank!");
       return;
     }
 
-    if (password.getText().isEmpty()
-        || enterdUsername.isBlank()) { // Display "Password field is empty/blank!" for 3s
+    if (password.getText().isEmpty() || enterdUsername.isBlank()) { // Display "Password field is empty/blank!" for 3s
       ViewUtils.showStatusMsg(status, "Password field is empty/blank!");
       _LOGGER.warn("Login Access Failed: `eneterdPassword` isEmpty/isBlank!");
       return;
     }
 
-    int userId = UserConnector.isUser(enterdUsername, password.getText());
+    final int userId = UserConnector.isUser(enterdUsername, password.getText());
     if (userId != -1) { // Login success!
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Dashboard.fxml"));
+      final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Dashboard.fxml"));
       loader.setControllerFactory(_ -> {
         return new DashboardController(userId);
       });
 
-      Parent root = loader.load();
-      Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+      final Parent root = loader.load();
+      final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
       stage.setTitle("HireLog - Sign up");
       stage.setScene(new Scene(root));
       stage.show();
@@ -135,10 +142,10 @@ public class LoginController {
    * @param event {@code ActionEvent}
    */
   @FXML
-  private void onSginUpHyperlinkAction(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignUp.fxml"));
+  private void onSginUpHyperlinkAction(final ActionEvent event) throws IOException {
+    final Parent root = FXMLLoader.load(getClass().getResource("/fxml/SignUp.fxml"));
     // Get the current stage (window) from the event source and set the new scene
-    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     stage.setTitle("HireLog - Sign up");
     stage.setScene(new Scene(root));
     stage.show();
@@ -146,7 +153,12 @@ public class LoginController {
 
   @FXML // This method is called by the FXMLLoader when initialization is complete
   private void initialize() {
-    assert logo != null : "fx:id=\"logo\" was not injected: check your FXML file 'SignUp.fxml'.";
-    assert password != null : "fx:id=\"password\" was not injected: check your FXML file 'SignUp.fxml'.";
+    assert forgetPassword != null : "fx:id=\"forgetPassword\" was not injected: check your FXML file 'Login.fxml'.";
+    assert login != null : "fx:id=\"login\" was not injected: check your FXML file 'Login.fxml'.";
+    assert logo != null : "fx:id=\"logo\" was not injected: check your FXML file 'Login.fxml'.";
+    assert password != null : "fx:id=\"password\" was not injected: check your FXML file 'Login.fxml'.";
+    assert sginUpHyperlink != null : "fx:id=\"sginUpHyperlink\" was not injected: check your FXML file 'Login.fxml'.";
+    assert status != null : "fx:id=\"status\" was not injected: check your FXML file 'Login.fxml'.";
+    assert username != null : "fx:id=\"username\" was not injected: check your FXML file 'Login.fxml'.";
   }
 }

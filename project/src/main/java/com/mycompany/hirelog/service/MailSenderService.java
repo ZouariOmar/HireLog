@@ -10,11 +10,14 @@
  * @since 08/08/2025
  *
  * <a href="https://www.simplejavamail.org" >simplejavamail</a>
- * <a href="https://proton.me/support/smtp-submission" >proton agent</a>
  */
 
 // `MailSenderService` pkg name
 package com.mycompany.hirelog.service;
+
+// `log4j` imports
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 // `simplejavamail` imports
 import org.simplejavamail.MailException;
@@ -27,6 +30,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvException;
 
 public class MailSenderService {
+  private static final Logger _LOGGER = LogManager.getLogger();
+
   public static final void send(final String to, final String subject, final String htmlText) {
     try {
       Dotenv dotenv = Dotenv.load();
@@ -47,8 +52,12 @@ public class MailSenderService {
                   .withHTMLText(htmlText)
                   .buildEmail() // Building the Email
           );
-    } catch (final MailException | DotenvException e) {
+    } catch (final DotenvException e) {
       e.printStackTrace();
+      _LOGGER.warn("com.mycompany.hirelog.service.MailSenderService#send - `.env` loading error!");
+    } catch (final MailException e) {
+      e.printStackTrace();
+      _LOGGER.warn("com.mycompany.hirelog.service.MailSenderService#send - Email sending error!");
     }
   }
 } // MailSenderService

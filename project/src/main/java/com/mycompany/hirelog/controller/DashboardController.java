@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-// Log4j java imports
+// `log4j` java imports
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,7 +33,7 @@ import com.mycompany.hirelog.dao.HireLogConnector;
 import com.mycompany.hirelog.view.LogTableUi;
 import com.mycompany.hirelog.view.ViewUtils;
 
-// JavaFx imports
+// `javafx` imports
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -43,12 +43,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
@@ -56,7 +56,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class DashboardController {
-
   private static final Logger _LOGGER = LogManager.getLogger();
 
   private final int userId; // User id | Must be come from `SignUpController`
@@ -118,20 +117,20 @@ public class DashboardController {
   }
 
   @FXML
-  void onAddLogBtnAction(ActionEvent event) throws IOException {
-    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HireLogForm.fxml"));
+  void onAddLogBtnAction(final ActionEvent event) throws IOException {
+    final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HireLogForm.fxml"));
     loader.setControllerFactory(_ -> {
       return new HireLogFormController(userId);
     });
-    Parent root = loader.load();
-    Stage stage = new Stage();
+    final Parent root = loader.load();
+    final Stage stage = new Stage();
     stage.setTitle("Add New Job");
     stage.setScene(new Scene(root));
     stage.show();
   }
 
   @FXML
-  void onRefrechBtnAction(ActionEvent e) {
+  void onRefrechBtnAction(final ActionEvent e) {
     ViewUtils.disableButton(refrechBtn, 1);
     ViewUtils.playGifAnimation(refrechImg, "/assets/icons8-refresh.gif", 1);
 
@@ -156,10 +155,10 @@ public class DashboardController {
   }
 
   @FXML
-  void onDeleteBtnAction(ActionEvent e) {
+  void onDeleteBtnAction(final ActionEvent e) {
     // Store the `log_id`'s that are selected
-    List<Integer> identifiers = new ArrayList<>();
-    ObservableList<LogTableUi> selectedItems = FXCollections.observableArrayList();
+    final List<Integer> identifiers = new ArrayList<>();
+    final ObservableList<LogTableUi> selectedItems = FXCollections.observableArrayList();
     for (final LogTableUi item : logTable.getItems()) {
       if (item.isSelected()) {
         identifiers.add(item.getLogId());
@@ -183,15 +182,15 @@ public class DashboardController {
   }
 
   @FXML
-  void onEditBtnAction(ActionEvent e) throws IOException {
-    for (LogTableUi item : logTable.getItems()) {
+  void onEditBtnAction(final ActionEvent e) throws IOException {
+    for (final LogTableUi item : logTable.getItems()) {
       if (item.isSelected()) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HireLogForm.fxml"));
+        final FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/HireLogForm.fxml"));
         loader.setControllerFactory(_ -> {
           return new HireLogFormController(userId, item);
         });
-        Parent root = loader.load();
-        Stage stage = new Stage();
+        final Parent root = loader.load();
+        final Stage stage = new Stage();
         stage.setTitle("Add New Job");
         stage.setScene(new Scene(root));
         stage.show();
@@ -201,8 +200,8 @@ public class DashboardController {
   }
 
   @FXML
-  void onAboutMenuItemAction(ActionEvent event) {
-    Alert about = new Alert(AlertType.INFORMATION);
+  void onAboutMenuItemAction(final ActionEvent event) {
+    final Alert about = new Alert(AlertType.INFORMATION);
     about.setTitle("About HireLog");
     about.setHeaderText("HireLog");
     about.setContentText(
@@ -217,8 +216,8 @@ public class DashboardController {
   }
 
   @FXML
-  void onSearchFieldKeyReleased(KeyEvent e) {
-    String typedSearch = searchField.getText().toLowerCase();
+  void onSearchFieldKeyReleased(final KeyEvent e) {
+    final String typedSearch = searchField.getText().toLowerCase();
 
     if (typedSearch == null || typedSearch.isBlank() || typedSearch.isEmpty()) {
       logTable.setItems(masterData); // Show all data if search is empty

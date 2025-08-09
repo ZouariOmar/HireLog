@@ -45,6 +45,8 @@ public final class UserConnector {
 
   private static final String _CREATE_USER_QUERY = "INSERT INTO users (username, password, email) VALUES(?, ?, ?)";
 
+  private static final String _UPDATE_USER_PASSWORD_QUERY = "UPDATE users set password = ? WHERE email = ?";
+
   private static final String _EMAIL_REGEX_PATTERN = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
 
   private static final String _PASSWORD_REGEX_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$";
@@ -78,31 +80,22 @@ public final class UserConnector {
    * }</pre>
    */
   public final static int isUser(final String username, final String password) {
-    PreparedStatement pstmt = null;
     ResultSet res = null;
-
-    try {
-      pstmt = DatabaseManager.connect().prepareStatement(_IS_USER_QUERY);
-
+    try (PreparedStatement pstmt = DatabaseManager.connect().prepareStatement(_IS_USER_QUERY)) {
       pstmt.setString(1, username);
-
       res = pstmt.executeQuery();
       _LOGGER.info("`isUser` query executed successfully!");
-
       if (res.next() && BCrypt.checkpw(password, res.getString("password")))
         return res.getInt("user_id");
 
     } catch (final SQLException e) {
       _LOGGER.error("`isUser` query Failed!");
       e.printStackTrace();
-
     } finally {
       try {
         if (res != null)
           res.close();
-        if (pstmt != null)
-          pstmt.close();
-      } catch (final Exception e) {
+      } catch (final SQLException e) {
         e.printStackTrace();
       }
     }
@@ -111,29 +104,16 @@ public final class UserConnector {
   }
 
   public static final boolean isExistedEmail(final String email) {
-    PreparedStatement pstmt = null;
-
-    try {
-      pstmt = DatabaseManager.connect().prepareStatement(_IS_EXISTED_USER_EMAIL_QUERY);
-
+    try (PreparedStatement pstmt = DatabaseManager.connect().prepareStatement(_IS_EXISTED_USER_EMAIL_QUERY)) {
       pstmt.setString(1, email);
-
-      final ResultSet res = pstmt.executeQuery();
-      _LOGGER.info("`createUser` query executed successfully!");
-
-      return res.next();
+      if (pstmt.executeQuery().next()) {
+        _LOGGER.info("`createUser` query executed successfully!");
+        return true;
+      }
 
     } catch (final SQLException e) {
       _LOGGER.error("`createUser` query Failed!");
       e.printStackTrace();
-
-    } finally {
-      try {
-        if (pstmt != null)
-          pstmt.close();
-      } catch (final Exception e) {
-        e.printStackTrace();
-      }
     }
 
     return false;
@@ -169,34 +149,36 @@ public final class UserConnector {
    * }</pre>
    */
   public static final String createUser(final User user) {
-    PreparedStatement pstmt = null;
     final String username = user.username().toLowerCase() + Integer.toString(getAvailbleUserId());
 
-    try {
-      pstmt = DatabaseManager.connect().prepareStatement(_CREATE_USER_QUERY);
-
+    try (PreparedStatement pstmt = DatabaseManager.connect().prepareStatement(_CREATE_USER_QUERY)) {
       pstmt.setString(1, username); // If `username` null, it will be catch it by `SQLException`
       pstmt.setString(2, BCrypt.hashpw(user.password(), BCrypt.gensalt()));
       pstmt.setString(3, user.email());
-
       pstmt.executeUpdate(); // Use executeUpdate() — not executeQuery() — for INSERT, UPDATE, or DELETE.
       _LOGGER.info("`createUser` query executed successfully!");
-
       return username; // Return `username`
+
     } catch (final SQLException e) {
       _LOGGER.error("`createUser` query Failed!");
       e.printStackTrace();
-
-    } finally {
-      try {
-        if (pstmt != null)
-          pstmt.close();
-      } catch (final Exception e) {
-        e.printStackTrace();
-      }
     }
 
     return null; // dummy
+  }
+
+  public static final void updatePassword(final String newPassword, final String email) {
+    try (PreparedStatement pstmt = DatabaseManager.connect().prepareStatement(_UPDATE_USER_PASSWORD_QUERY)) {
+      pstmt.setString(1, BCrypt.hashpw(newPassword, BCrypt.gensalt()));
+      pstmt.setString(2, email);
+      pstmt.executeUpdate();
+
+    } catch (final SQLException e) {
+      _LOGGER.error("`updatePassword` query Failed!");
+      e.printStackTrace();
+    }
+
+    _LOGGER.info("`updatePassword` query executed successfully!");
   }
 
   /**

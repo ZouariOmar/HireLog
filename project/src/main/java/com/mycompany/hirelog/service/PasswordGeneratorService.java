@@ -16,7 +16,6 @@
 package com.mycompany.hirelog.service;
 
 // `passay` imports
-import org.passay.CharacterData;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
 import org.passay.PasswordGenerator;
@@ -28,17 +27,7 @@ public class PasswordGeneratorService {
         (Rule) new CharacterRule(EnglishCharacterData.LowerCase, 1),
         (Rule) new CharacterRule(EnglishCharacterData.UpperCase, 1),
         (Rule) new CharacterRule(EnglishCharacterData.Digit, 1),
-        new CharacterRule(new CharacterData() {
-          @Override
-          public String getErrorCode() {
-            return "";
-          }
-
-          @Override
-          public String getCharacters() {
-            return "@#$%^&+=";
-          }
-        }));
+        (Rule) new CharacterRule(EnglishCharacterData.SpecialAscii, 1));
   }
 
   /**

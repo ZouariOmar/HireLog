@@ -92,6 +92,10 @@ public class ViewUtils {
     visiblePause.play();
   }
 
+  public final static void playGifAnimation(final ImageView imageView, final String gifPath) {
+    playGifAnimation(imageView, gifPath, 1d);
+  }
+
   public final static void disableButton(final Button button, double seconds) {
     button.setDisable(true);
     final PauseTransition visiblePause = new PauseTransition(Duration.seconds(seconds));

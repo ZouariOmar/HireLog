@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-// Java Log4j imports
+// `log4j` imports
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +31,7 @@ import com.mycompany.hirelog.dao.UserConnector;
 import com.mycompany.hirelog.model.User;
 import com.mycompany.hirelog.view.ViewUtils;
 
-// JavaFx imports
+// `javafx` imports
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,7 +48,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class SignUpController {
-
   private static final Logger _LOGGER = LogManager.getLogger();
 
   @FXML // ResourceBundle that was given to the FXMLLoader
@@ -89,7 +88,7 @@ public class SignUpController {
    * @throws IOException
    */
   @FXML
-  void onSignUpAction(ActionEvent event) throws IOException {
+  void onSignUpAction(final ActionEvent event) throws IOException {
     final String entredPrename = prename.getText(),
         entredName = name.getText(),
         entredEmail = email.getText(),
@@ -97,45 +96,48 @@ public class SignUpController {
 
     if (entredPrename.isEmpty() || entredPrename.isBlank()) { // Display "Prename field is empty/blank!" for 3s
       ViewUtils.showStatusMsg(status, "Prename field is empty/blank!");
-      _LOGGER.warn("SignUp Failed: `enterdPrename` isEmpty/isBlank!");
+      _LOGGER.warn("`enterdPrename` isEmpty/isBlank!");
       return;
     }
 
     if (entredName.isEmpty() || entredName.isBlank()) { // Display "Name field is empty/blank!" for 3s
       ViewUtils.showStatusMsg(status, "Name field is empty/blank!");
-      _LOGGER.warn("SignUp Failed: `enterdName` isEmpty/isBlank!");
+      _LOGGER.warn("`enterdName` isEmpty/isBlank!");
       return;
-
     }
 
     if (!UserConnector.isEmail(entredEmail)) { // Display "Invalid email format!" for 3s
       ViewUtils.showStatusMsg(status, "Invalid email format!");
-      _LOGGER.warn("SignUp Failed: Invalid email format! - enterdEmail: `{}`", entredEmail);
+      _LOGGER.warn("Invalid email format! - enterdEmail: `{}`", entredEmail);
       return;
-
     }
 
     if (UserConnector.isExistedEmail(entredEmail)) { // Display "This email already exist!" for 3s
-      ViewUtils.showStatusMsg(status, "This email already exist!");
-      _LOGGER.warn("SignUp Failed: Invalid email format! - enterdEmail: `{}`", entredEmail);
+      ViewUtils.showStatusMsg(status, "Email already exist!");
+      _LOGGER.warn("Email already exist! - enterdEmail: `{}`", entredEmail);
       return;
     }
 
     if (!UserConnector.isPassword(entredPassword)) { // Display "Invalid password format!" for 3s
       ViewUtils.showStatusMsg(status, "Invalid password format!");
-      _LOGGER.warn("SignUp Failed: Invalid password format! - enterdPassword: `{}`", entredEmail);
+      _LOGGER.warn("Invalid password format! - enterdPassword: `{}`", entredPassword);
       return;
     }
 
-    String username = UserConnector.createUser(new User(
+    final String username = UserConnector.createUser(new User(
         entredPrename + entredName,
         entredEmail,
         entredPassword));
 
     if (username != null) { // SignUp success!
       ViewUtils.showStatusMsg(status, "Your username is: " + username, Color.GREEN, 10); // Display `username` for 10s
-      _LOGGER.info("SignUp Success: `{}` accessed! - prename: {} Name: {} Email: {} Password: {}",
-          entredPrename, entredPrename, entredName, entredEmail, entredPassword);
+      _LOGGER.info(
+          "SignUp Success: `{}` accessed! - prename: {} Name: {} Email: {} Password: {}",
+          entredPrename,
+          entredPrename,
+          entredName,
+          entredEmail,
+          entredPassword);
     } // No need for else statment
   }
 
@@ -163,9 +165,9 @@ public class SignUpController {
    * @param event {@code ActionEvent}
    */
   @FXML
-  private void onSginInHyperlinkAction(ActionEvent event) throws IOException {
-    Parent root = FXMLLoader.load(getClass().getResource("/fxml/Login.fxml"));
-    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+  private void onSginInHyperlinkAction(final ActionEvent event) throws IOException {
+    final Parent root = FXMLLoader.load(getClass().getResource("/fxml/Login.fxml"));
+    final Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
     stage.setTitle("HireLog - Dashboard");
     stage.setScene(new Scene(root));
     stage.show();
