@@ -28,13 +28,13 @@
 ![Bash Script](https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)
 
 <p align="center">
-  <a href="#🚀-key-features">Key Features</a> •
-  <a href="#🛠-how-to-use">How To Use</a> •
-  <a href="#📂-project-structure">Project Structure</a> •
-  <a href="#🛠-built-with">Built With</a> •
-  <a href="#🤝-contributions">Contributions</a> •
-  <a href="#📜-license">License</a> •
-  <a href="#📬-contact">Contact</a>
+  <a href="#-key-features">Key Features</a> •
+  <a href="#-how-to-use">How To Use</a> •
+  <a href="#-project-structure">Project Structure</a> •
+  <a href="#-built-with">Built With</a> •
+  <a href="#-contributions">Contributions</a> •
+  <a href="#-license">License</a> •
+  <a href="#-contact">Contact</a>
 </p>
 
 <p align="center">
